@@ -3,11 +3,11 @@ $:.push File.expand_path("../lib", __FILE__)
 require "dada/version"
 
 Gem::Specification.new do |s|
-  s.name        = "dada"
+  s.name        = "Dada"
   s.version     = Dada::VERSION
-  s.authors     = ["Timon Vonk"]
-  s.email       = ["mail@timonv.nl"]
-  s.homepage    = ""
+  s.authors     = ["Timon Vonk @ Exvo"]
+  s.email       = ["timon@exvo.com"]
+  s.homepage    = "http://www.github.com/exvo/dada"
   s.summary     = %q{TODO: Write a gem summary}
   s.description = %q{TODO: Write a gem description}
 
@@ -18,7 +18,12 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  # specify any dependencies here; for example:
-  # s.add_development_dependency "rspec"
-  # s.add_runtime_dependency "rest-client"
+  # Development dependencies
+  s.add_development_dependency "rspec"
+  s.add_development_dependency "guard"
+  s.add_development_dependency "guard-rspec"
+  s.add_development_dependency "factory_girl"
+
+  # Runtime dependencies
+  s.add_runtime_dependency "dalli"
 end
