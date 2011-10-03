@@ -22,8 +22,14 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec"
   s.add_development_dependency "guard"
   s.add_development_dependency "guard-rspec"
-  s.add_development_dependency "factory_girl"
+  s.add_development_dependency "growl_notify"
+  s.add_development_dependency "rb-fsevent"
+  s.add_development_dependency "httparty"
+  s.add_development_dependency "fakeweb"
+
 
   # Runtime dependencies
   s.add_runtime_dependency "dalli"
+  s.add_runtime_dependency "yard"
+  s.add_runtime_dependency "active_support", ">= 3.0" # For helper methods
 end
