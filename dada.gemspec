@@ -22,8 +22,9 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec"
   s.add_development_dependency "guard"
   s.add_development_dependency "guard-rspec"
-  s.add_development_dependency "growl_notify"
+  #s.add_development_dependency "growl_notify"
   s.add_development_dependency "rb-fsevent"
+  s.add_development_dependency "growl"
   s.add_development_dependency "httparty"
   s.add_development_dependency "fakeweb"
 
