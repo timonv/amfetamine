@@ -17,12 +17,13 @@ describe Dada::Base do
 
   describe "Class dummy, setup with dada::base" do
     let(:dummy) { build(:dummy) }
+    let(:dummy2) { build(:dummy) }
     subject { Dummy}
 
     it { should be_cachable }
 
     it "should find dummy" do
-      stub_response(dummy) do
+      stub_single_response(dummy) do
         Dummy.find(dummy.id).should == dummy
       end
     end
@@ -31,6 +32,26 @@ describe Dada::Base do
       stub_nil_response do
         Dummy.find(dummy.id * 2).should be_nil
       end
+    end
+
+    it "should find all if objects are present" do
+      dummies = []
+      stub_all_response(dummy, dummy2) do
+        dummies = Dummy.all
+      end
+
+      dummies.should include(dummy)
+      dummies.should include(dummy2)
+      dummies.length.should eq(2)
+    end
+    
+    it "should return empty array if objects are not present" do
+      dummies = []
+      stub_all_nil_response do
+        dummies = Dummy.all
+      end
+
+      dummies.should eq([])
     end
   end
 end

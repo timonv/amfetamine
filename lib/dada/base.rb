@@ -18,6 +18,18 @@ module Dada
       end
     end
 
+    def self.all
+      key = self.rest_path
+      if data = Dada::Cache.get(key) && cachable?
+        return data.map { |d| build_object(d) }
+      elsif data = self.handle_request(:get, key)
+        Dada::Cache.add(key, data) if cachable?
+        return data.map { |d| build_object(d) }
+      else
+        return nil
+      end
+    end
+
     # Builds an object from JSON, later on will need more (maybe object id? Or should that go in find?)
     # For now, we return the same object if its still in process memory
     def self.build_object(args)
