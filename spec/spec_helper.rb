@@ -41,3 +41,15 @@ def stub_nil_response
   yield
   FakeWeb.clean_registry
 end
+
+def stub_post_response
+  FakeWeb.register_uri(:post, "http://test.local/dummies", :body => nil, :status => ["201", "Object created"], :content_type => 'application/json')
+  yield
+  FakeWeb.clean_registry
+end
+
+def stub_post_errornous_response
+  FakeWeb.register_uri(:post, "http://test.local/dummies", :body => {:description => 'can\'t be empty'}.to_json, :status => ["406", "Validation Errors"], :content_type => 'application/json')
+  yield
+  FakeWeb.clean_registry
+end

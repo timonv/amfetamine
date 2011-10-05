@@ -3,6 +3,8 @@ require 'json'
 
 class Dummy < Dada::Base
 
+  attr_accessor :title, :description
+
   def to_hash
     {
       :title => title,

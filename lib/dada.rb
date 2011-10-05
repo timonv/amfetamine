@@ -1,9 +1,9 @@
 require "dada/version"
-require "dada/cache"
-require "dada/rest_helpers"
-require "dada/base"
-require "dada/config"
-require 'dalli'
+require "dada/cache" # Common caching methods
+require "dada/rest_helpers" # Methods for determining REST paths
+require "dada/query_methods" # Methods for interfacing with the classs
+require "dada/base" # Basics
+require "dada/config" # Configuration class
 
 module Dada
   # Your code goes here...
