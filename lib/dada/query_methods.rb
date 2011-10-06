@@ -10,10 +10,10 @@ module Dada
     module ClassMethods
       def find(id)
         key = self.find_path(id)
-        if data = Dada::Cache.get(key) && cachable?
+        if data = self.cache.get(key) && cachable?
           return build_object(data)
         elsif data = self.handle_request(:get, key)
-          Dada::Cache.add(key, data) if cachable?
+          self.cache.add(key, data) if cachable?
           return build_object(data)
         else
           return nil
@@ -22,10 +22,10 @@ module Dada
 
       def all
         key = self.rest_path
-        if data = Dada::Cache.get(key) && cachable?
+        if data = self.cache.get(key) && cachable?
           return data.map { |d| build_object(d) }
         elsif data = self.handle_request(:get, key)
-          Dada::Cache.add(key, data) if cachable?
+          self.cache.add(key, data) if cachable?
           return data.map { |d| build_object(d) }
         else
           return nil

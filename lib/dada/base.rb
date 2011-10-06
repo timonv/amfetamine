@@ -14,8 +14,12 @@ module Dada
       obj.tap { |obj| obj.instance_variable_set('@notsaved',false) } # because I don't want a global writer
     end
 
+    # Allows you to override the global caching server
+    def self.cache_server=(value)
+      @cache_server = Dada::Cache.new(value)
+    end
+
     # Base method for creating objects
-    # TODO implement
     def initialize(args)
       self.id = args.delete(:id) || args.delete('id')
       args.each { |k,v| self.public_send("#{k}=", v) }

@@ -103,9 +103,16 @@ describe Dada::Base do
       end
 
       it "should not do a request if the data doesn't change" do
+        # Assumes that dummy.update would raise if not within stubbed request.
         dummy.update({:title => dummy.title})
         dummy.errors.should be_empty
       end
+    end
+
+    context "#delete" do
+      it "should delete the object if response is succesful"
+      it "should return nil if object doesn't exist anymore"
+      it "should return false if delete failed"
     end
   end
 end
