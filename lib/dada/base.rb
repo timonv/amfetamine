@@ -3,7 +3,7 @@ module Dada
     include Dada::RestHelpers
     include Dada::QueryMethods
 
-    attr_reader :id, :errors
+    attr_reader :id
 
    
     # Builds an object from JSON, later on will need more (maybe object id? Or should that go in find?)
@@ -47,6 +47,15 @@ module Dada
       self.instance_variables.all? do |i|
         self.instance_variable_get(i) == other.instance_variable_get(i)
       end
+    end
+
+    def errors
+      @errors ||= {}
+    end
+
+    protected
+    def self.cache
+      @cache_server || Dada::Cache
     end
   end
 end

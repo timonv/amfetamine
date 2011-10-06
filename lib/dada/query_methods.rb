@@ -50,6 +50,13 @@ module Dada
       handle_response(response)
     end
 
+    def update(attrs)
+      return true if attrs.all? { |k,v| self.public_send(k) == v } # Don't update if no attributes change
+      attrs.each { |k,v| self.public_send("#{k}=", v) }
+      self.save
+    end
+
+
     def new?
       @notsaved
     end
@@ -58,5 +65,8 @@ module Dada
     def id=(id)
       @id = id
     end
+     def notsaved=(bool)
+       @notsaved = bool
+     end
   end
 end

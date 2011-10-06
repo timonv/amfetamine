@@ -61,10 +61,11 @@ module Dada
         parse_response(response)
       end
 
+      # handles response codes, should be refactored later to a more pretty solution without crap.
       def parse_response(response)
         if response.code == 404
           return nil
-        elsif response.code == 201
+        elsif response.code.to_s =~ /^20\d{1}$/ && response.body.empty?
           return true
         else
           JSON.parse(response.body)

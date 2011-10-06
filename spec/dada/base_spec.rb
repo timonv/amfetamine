@@ -80,5 +80,32 @@ describe Dada::Base do
         new_dummy.errors.should eq({'description' => 'can\'t be empty'})
       end
     end
+
+    context "#update" do
+      before(:each) do
+        dummy.send(:notsaved=, false)
+      end
+
+      it "should update if response is succesful" do
+        stub_update_response do
+          dummy.update({:title => 'zomg'})
+        end
+        dummy.should_not be_new
+        dummy.title.should eq('zomg')
+      end
+
+      it "should show errors if response is not succesful" do
+        stub_update_errornous_response do
+          dummy.update({:title => ''})
+        end
+        dummy.should_not be_new
+        dummy.errors.should eq({'title' => 'can\'t be empty'})
+      end
+
+      it "should not do a request if the data doesn't change" do
+        dummy.update({:title => dummy.title})
+        dummy.errors.should be_empty
+      end
+    end
   end
 end
