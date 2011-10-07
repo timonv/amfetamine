@@ -29,9 +29,9 @@ module Dada
 
 
     # Checks if object is cached
-    # TODO implement
+    # TODO this is not very efficient, but dalli doesn't provide a polling function :(
     def cached?
-      true
+      self.cache.get(self.singular_path) ? true : false
     end
 
     # Checks if object is cachable
@@ -60,6 +60,10 @@ module Dada
     protected
     def self.cache
       @cache_server || Dada::Cache
+    end
+
+    def cache
+      self.class.cache
     end
   end
 end

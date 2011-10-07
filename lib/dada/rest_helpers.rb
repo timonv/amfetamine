@@ -21,8 +21,6 @@ module Dada
     # TODO: Needs refactoring, now just want to make the test pass =)
     def handle_response(response)
       if response == true
-        Dada::Cache.delete(self.singular_path)
-        Dada::Cache.add(self.singular_path, self.to_json) # This might pose problems as self.to_json != (always) response body
         self.instance_variable_set('@notsaved', false)
         true
       else
@@ -31,7 +29,6 @@ module Dada
       end
     end
 
-    
 
     module ClassMethods
       def rest_path
@@ -55,6 +52,8 @@ module Dada
           response = Dada::Config.rest_client.post(path, :body => data)
         elsif(method == :put)
           response = Dada::Config.rest_client.put(path, :body => data)
+        elsif(method == :delete)
+          response = Dada::Config.rest_client.delete(path)
         else
           raise UnknownRESTMethod, "handle_request only responds to get, put, post and delete"
         end

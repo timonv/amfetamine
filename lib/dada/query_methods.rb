@@ -1,7 +1,8 @@
 module Dada
   module QueryMethods
- # Base method for finding objects
+    # Base method for finding objects
     # Should this be refactored to a different class that checks if cached and returns object?
+    # Caching methods are called here ONLY.
     def self.included(base)
       base.extend ClassMethods
     end
@@ -42,12 +43,29 @@ module Dada
         return false
       end
 
-      if self.new?
-        response = self.class.handle_request(:post, self.rest_path, self.to_json)
+      response = if self.new?
+        self.class.handle_request(:post, rest_path, self.to_json)
       else
-        response = self.class.handle_request(:put, self.singular_path, self.to_json)
+        self.class.handle_request(:put, singular_path, self.to_json)
       end
-      handle_response(response)
+
+      if handle_response(response)
+        cache.set(singular_path, self.to_json)
+      end
+    end
+
+    def destroy
+      if self.new?
+        return false
+      end
+
+      response = self.class.handle_request(:delete, singular_path)
+
+      if handle_response(response)
+        cache.delete(singular_path)
+        self.notsaved = true # Because its a new object if the server side got deleted
+        self.id = nil # Not saved? No ID.
+      end
     end
 
     def update(attrs)

@@ -8,7 +8,6 @@ describe Dada::Base do
     subject { dummy }
 
     it { should be_valid }
-    it { should be_cached }
     its(:title) { should ==('Dummy')}
     its(:description) { should ==('Crash me!')}
 
@@ -27,6 +26,7 @@ describe Dada::Base do
         stub_single_response(dummy) do
           Dummy.find(dummy.id).should == dummy
         end
+        dummy.should be_cached
       end
       
       it "should return nil if object not found" do
@@ -69,6 +69,7 @@ describe Dada::Base do
         end
         new_dummy.should be_a(Dummy)
         new_dummy.should_not be_new
+        new_dummy.should be_cached
       end
 
       it "should return errors if data is incorrect" do
@@ -78,6 +79,7 @@ describe Dada::Base do
         end
         new_dummy.should be_new
         new_dummy.errors.should eq({'description' => 'can\'t be empty'})
+        new_dummy.should_not be_cached
       end
     end
 
@@ -92,6 +94,7 @@ describe Dada::Base do
         end
         dummy.should_not be_new
         dummy.title.should eq('zomg')
+        dummy.should be_cached
       end
 
       it "should show errors if response is not succesful" do
@@ -110,9 +113,26 @@ describe Dada::Base do
     end
 
     context "#delete" do
-      it "should delete the object if response is succesful"
-      it "should return nil if object doesn't exist anymore"
-      it "should return false if delete failed"
+      before(:each) do
+        dummy.send(:notsaved=, false)
+      end
+
+      it "should delete the object if response is succesful" do
+        stub_delete_response do
+          dummy.destroy
+        end
+        dummy.should be_new
+        dummy.id.should be_nil
+        dummy.should_not be_cached
+      end
+
+      it "should return false if delete failed" do
+        stub_delete_errornous_response do
+          dummy.destroy
+        end
+        dummy.should_not be_new
+        dummy.errors.should == { 'delete' => 'Something wen\'t wrong' }
+      end
     end
   end
 end
