@@ -15,8 +15,8 @@ module Dada
     end
 
     # Allows you to override the global caching server
-    def self.cache_server=(value)
-      @cache_server = Dada::Cache.new(value)
+    def self.memcached_instance(value, options={})
+      @cache_server = Dada::Cache.new(value, options)
     end
 
     # Base method for creating objects

@@ -47,13 +47,13 @@ module Dada
       # *emerging*
       def handle_request(method, path, data = nil)
         if(method == :get)
-          response = Dada::Config.rest_client.get(path)
+          response = rest_client.get(path)
         elsif(method == :post)
-          response = Dada::Config.rest_client.post(path, :body => data)
+          response = rest_client.post(path, :body => data)
         elsif(method == :put)
-          response = Dada::Config.rest_client.put(path, :body => data)
+          response = rest_client.put(path, :body => data)
         elsif(method == :delete)
-          response = Dada::Config.rest_client.delete(path)
+          response = rest_client.delete(path)
         else
           raise UnknownRESTMethod, "handle_request only responds to get, put, post and delete"
         end
@@ -71,6 +71,15 @@ module Dada
         end
       end
 
+      def rest_client
+        @rest_client || Dada::Config.rest_client
+      end
+
+      # Allows setting a different rest client per class
+      def rest_client=(value)
+        raise ConfigurationInvalidException, 'Invalid value for rest_client' if ![:get,:put,:delete,:post].all? { |m| value.respond_to?(m) }
+        @rest_client ||= value
+      end
     end
   end
 end
