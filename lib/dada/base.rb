@@ -1,7 +1,14 @@
+require 'active_model'
+
 module Dada
   class Base
     include Dada::RestHelpers
     include Dada::QueryMethods
+
+    # Activemodel
+    extend ActiveModel::Naming
+    include ActiveModel::Validations
+    include ActiveModel::Serialization
 
     attr_reader :id
 
@@ -20,11 +27,27 @@ module Dada
     end
 
     # Base method for creating objects
-    def initialize(args)
+    def initialize(args={})
       self.id = args.delete(:id) || args.delete('id')
       args.each { |k,v| self.public_send("#{k}=", v) }
       @notsaved = true
       self
+    end
+
+    def persisted?
+      !new?
+    end
+
+    def to_model
+      self
+    end
+
+    def to_key
+      persisted? ? [id] : nil
+    end
+
+    def to_param
+      persisted? ? id.to_s : nil
     end
 
 
@@ -43,7 +66,8 @@ module Dada
     # Checks to see if an object is valid or not
     # TODO implement
     def valid?
-      true
+      errors.clear
+      run_validations!
     end
 
     # We need to redefine this so it doesn't check on object_id
@@ -54,7 +78,7 @@ module Dada
     end
 
     def errors
-      @errors ||= {}
+      @errors ||= ActiveModel::Errors.new(self)
     end
 
     protected
@@ -65,5 +89,6 @@ module Dada
     def cache
       self.class.cache
     end
+
   end
 end

@@ -2,8 +2,10 @@ require_relative 'configure.rb'
 require 'json'
 
 class Dummy < Dada::Base
+  @@children = []
 
   attr_accessor :title, :description
+  validates_presence_of :title, :description
 
   def to_hash
     {
@@ -21,7 +23,7 @@ class Dummy < Dada::Base
 
 
   # Needed for proper ID tracking
-  def initialize(args)
+  def initialize(args={})
     @@children << self
     super(args)
   end

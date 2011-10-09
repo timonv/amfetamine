@@ -19,12 +19,15 @@ module Dada
 
     # This method handles the save response
     # TODO: Needs refactoring, now just want to make the test pass =)
+    # Making assumption here that when response is nil, it should have possitive result. Needs refactor when slept more
     def handle_response(response)
-      if response == true
+      if response.nil?
         self.instance_variable_set('@notsaved', false)
         true
       else
-        self.instance_variable_set('@errors', response)
+        response.each do |attr, mesg|
+          errors.add(attr.to_sym, mesg )
+        end
         false
       end
     end
@@ -64,10 +67,9 @@ module Dada
       def parse_response(response)
         if response.code == 404
           return nil
-        elsif response.code.to_s =~ /^20\d{1}$/ && response.body.empty?
-          return true
         else
-          JSON.parse(response.body)
+          puts "#{response.code}: #{response.body}"
+          response.body.present? ? JSON.parse(response.body) : nil
         end
       end
 

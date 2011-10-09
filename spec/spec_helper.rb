@@ -1,4 +1,5 @@
 require File.expand_path("../../lib/dada.rb", __FILE__)
+require 'helpers/active_model_lint'
 require 'dummy/dummy'
 require 'fakeweb'
 require 'helpers/fakeweb_responses'
