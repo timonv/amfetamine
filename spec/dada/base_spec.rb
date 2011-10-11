@@ -78,7 +78,7 @@ describe Dada::Base do
           new_dummy = Dummy.create({:title => 'test'})
         end
         new_dummy.should be_new
-        new_dummy.errors.should eq({:description => ['can\'t be blank']})
+        new_dummy.errors.messages.should eq({:description => ['can\'t be blank']})
         new_dummy.should_not be_cached
       end
     end
@@ -102,7 +102,7 @@ describe Dada::Base do
           dummy.update({:title => ''})
         end
         dummy.should_not be_new
-        dummy.errors.should eq({:title => ['can\'t be blank']})
+        dummy.errors.messages.should eq({:title => ['can\'t be blank']})
       end
 
       it "should not do a request if the data doesn't change" do
@@ -131,7 +131,7 @@ describe Dada::Base do
           dummy.destroy
         end
         dummy.should_not be_new
-        dummy.errors.should == { :delete => ['Something wen\'t wrong'] }
+        dummy.errors.messages.should == { :delete => ['Something wen\'t wrong'] }
       end
     end
   end
