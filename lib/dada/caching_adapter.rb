@@ -8,8 +8,8 @@ module Dada
     end
 
 
-    def initialize(server)
-      @cache_server ||= Dalli::Client.new(server)
+    def initialize(server, options={})
+      @cache_server ||= Dalli::Client.new(server, options)
     end
 
     def cache_server

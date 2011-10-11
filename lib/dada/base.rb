@@ -22,7 +22,7 @@ module Dada
     end
 
     # Allows you to override the global caching server
-    def self.memcached_instance(value, options={})
+    def self.memcached_instance=(value, options={})
       @cache_server = Dada::Cache.new(value, options)
     end
 
@@ -49,7 +49,6 @@ module Dada
     def to_param
       persisted? ? id.to_s : nil
     end
-
 
     # Checks if object is cached
     # TODO this is not very efficient, but dalli doesn't provide a polling function :(
@@ -79,6 +78,12 @@ module Dada
 
     def errors
       @errors ||= ActiveModel::Errors.new(self)
+    end
+
+    def configure_dada(hash)
+      hash.each do |k,v|
+        self.public_send("#{k.to_s}=", v)
+      end
     end
 
     protected

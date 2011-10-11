@@ -68,7 +68,6 @@ module Dada
         if response.code == 404
           return nil
         else
-          puts "#{response.code}: #{response.body}"
           response.body.present? ? JSON.parse(response.body) : nil
         end
       end
