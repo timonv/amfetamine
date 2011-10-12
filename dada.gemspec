@@ -3,7 +3,7 @@ $:.push File.expand_path("../lib", __FILE__)
 require "dada/version"
 
 Gem::Specification.new do |s|
-  s.name        = "Dada"
+  s.name        = "dada"
   s.version     = Dada::VERSION
   s.authors     = ["Timon Vonk @ Exvo"]
   s.email       = ["timon@exvo.com"]
