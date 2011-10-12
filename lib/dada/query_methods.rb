@@ -29,7 +29,7 @@ module Dada
           self.cache.add(key, data) if cachable?
           return data.map { |d| build_object(d) }
         else
-          return nil
+          return [] # Something went wrong, but lets not make a big deal out of it
         end
       end
 

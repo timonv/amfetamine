@@ -14,7 +14,7 @@ module Dada
     end
 
     def singular_path
-      self.class.base_uri + "#{self.class.rest_path}/#{self.id.to_s}"
+      self.class.find_path(self.id)
     end
 
     # This method handles the save response
@@ -34,12 +34,16 @@ module Dada
 
 
     module ClassMethods
-      def rest_path
-        base_uri + "/#{self.name.downcase.pluralize}"
+      def rest_path(nested=false)
+        if nested
+          "/#{self.name.downcase.pluralize}"
+        else
+          base_uri + "/#{self.name.downcase.pluralize}" + resource_suffix
+        end
       end
 
       def find_path(id)
-        base_uri + "#{self.rest_path}/#{id.to_s}"
+        base_uri + "#{self.rest_path(true)}/#{id.to_s}" + resource_suffix
       end
 
       def base_uri
@@ -76,10 +80,19 @@ module Dada
         @rest_client || Dada::Config.rest_client
       end
 
+      def resource_suffix
+        @resource_suffix || Dada::Config.resource_suffix || ""
+      end
+
       # Allows setting a different rest client per class
       def rest_client=(value)
-        raise ConfigurationInvalidException, 'Invalid value for rest_client' if ![:get,:put,:delete,:post].all? { |m| value.respond_to?(m) }
+        raise Dada::Config::ConfigurationInvalidException, 'Invalid value for rest_client' if ![:get,:put,:delete,:post].all? { |m| value.respond_to?(m) }
         @rest_client ||= value
+      end
+
+      def resource_suffix=(value)
+        raise Dada::Config::ConfigurationInvalidException, 'Invalid value for resource suffix' if !value.is_a?(String)
+        @resource_suffix = value
       end
     end
   end
