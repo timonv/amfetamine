@@ -23,7 +23,11 @@ module Dada
 
     # Allows you to override the global caching server
     def self.memcached_instance=(value, options={})
-      @cache_server = Dada::Cache.new(value, options)
+      if value.is_a?(Array)
+        @cache_server = Dada::Cache.new(value.shift, value.first) # First element is the server, second must be the options
+      else
+        @cache_server = Dada::Cache.new(value, options)
+      end
     end
 
     # Base method for creating objects
@@ -63,7 +67,6 @@ module Dada
     end
 
     # Checks to see if an object is valid or not
-    # TODO implement
     def valid?
       errors.clear
       run_validations!
@@ -80,7 +83,7 @@ module Dada
       @errors ||= ActiveModel::Errors.new(self)
     end
 
-    def configure_dada(hash)
+    def self.configure_dada(hash)
       hash.each do |k,v|
         self.public_send("#{k.to_s}=", v)
       end
