@@ -15,12 +15,6 @@ class Dummy < Dada::Base
     }
   end
 
-  def to_json(*args)
-    {
-      :dummy => self.to_hash
-    }.to_json
-  end
-
 
   # Needed for proper ID tracking
   def initialize(args={})

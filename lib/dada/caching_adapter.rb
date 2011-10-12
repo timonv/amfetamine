@@ -34,6 +34,10 @@ module Dada
       def delete(key)
         cache_server.delete(key)
       end
+
+      def flush
+        cache_server.flush
+      end
     end
 
     module CacheServer
@@ -41,6 +45,9 @@ module Dada
       def cache_server
         Dada::Config.memcached_instance
       end
+
+  
+
     end
   end
 end

@@ -9,7 +9,8 @@ def stub_single_response(object)
 end
 
 def stub_all_response(*objects)
-  json = JSON.generate(objects.inject([]) { |acc,o| acc << o })
+  #json = JSON.generate(objects.inject([]) { |acc,o| acc <<  })
+  json = objects.inject([]) { |acc, o| acc << o.as_json(:root => o.class.model_name.element, :methods => [:id]) }.to_json
   FakeWeb.register_uri(:get, "http://test.local/dummies", :body => json, :content_type => 'application/json')
   yield
   FakeWeb.clean_registry

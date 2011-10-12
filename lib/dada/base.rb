@@ -9,8 +9,10 @@ module Dada
     extend ActiveModel::Naming
     include ActiveModel::Validations
     include ActiveModel::Serialization
+    include ActiveModel::Serializers::JSON
 
     attr_reader :id
+    attr_accessor :attributes
 
    
     # Builds an object from JSON, later on will need more (maybe object id? Or should that go in find?)
@@ -32,8 +34,9 @@ module Dada
 
     # Base method for creating objects
     def initialize(args={})
+      @attributes = {}
       self.id = args.delete(:id) || args.delete('id')
-      args.each { |k,v| self.public_send("#{k}=", v) }
+      args.each { |k,v| self.public_send("#{k}=", v); self.attributes[k.to_sym] = v  }
       @notsaved = true
       self
     end
@@ -44,6 +47,12 @@ module Dada
 
     def to_model
       self
+    end
+
+    def to_json(*gen)
+      options = {}
+      options.merge!(:root => self.class.model_name.element)
+      super(self.as_json(options))
     end
 
     def to_key

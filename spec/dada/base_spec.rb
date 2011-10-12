@@ -10,6 +10,7 @@ describe Dada::Base do
     it { should be_valid }
     its(:title) { should ==('Dummy')}
     its(:description) { should ==('Crash me!')}
+    its(:to_json) { should match(/dummy/) }
 
   end
 
