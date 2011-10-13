@@ -29,7 +29,7 @@ def stub_nil_response
 end
 
 def stub_post_response
-  FakeWeb.register_uri(:post, "http://test.local/dummies", :body => nil, :status => ["201", "Object created"], :content_type => 'application/json')
+  FakeWeb.register_uri(:post, "http://test.local/dummies", :body => {:bla => "Rails has crap too in the body!"}.to_json, :status => ["201", "Object created"], :content_type => 'application/json')
   yield
   FakeWeb.clean_registry
 end

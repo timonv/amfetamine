@@ -7,34 +7,31 @@ module Dada
       base.extend ClassMethods
     end
 
-    # Can't set new? as an instance var
     module ClassMethods
       def find(id)
         key = self.find_path(id)
-        if data = self.cache.get(key) && cachable?
-          return build_object(data)
-        elsif data = self.handle_request(:get, key)
-          self.cache.add(key, data) if cachable?
-          return build_object(data)
-        else
-          return nil
-        end
+        data = get_data(key)
+        build_object(data) if data
       end
 
       def all
         key = self.rest_path
-        if data = self.cache.get(key) && cachable?
-          return data.map { |d| build_object(d) }
-        elsif data = self.handle_request(:get, key)
-          self.cache.add(key, data) if cachable?
-          return data.map { |d| build_object(d) }
-        else
-          return [] # Something went wrong, but lets not make a big deal out of it
-        end
+        data = get_data(key)
+        return data.map { |d| build_object(d) } if data
       end
 
       def create(args)
         self.new(args).tap(&:save)
+      end
+
+      def get_data(key, method=:get)
+        if cachable?
+          cache.fetch(key) do
+            handle_request(method, key)
+          end
+        else
+          handle_request(method,key)
+        end
       end
     end
 
@@ -50,7 +47,7 @@ module Dada
       end
 
       if handle_response(response)
-        cache.set(singular_path, self.to_json)
+        cache.set(singular_path, self.to_json) if cachable?
       end
     end
 

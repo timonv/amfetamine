@@ -71,6 +71,11 @@ module Dada
       def parse_response(response)
         if response.code == 404
           return nil
+        elsif response.code == 500
+          # Gracefully or not?
+          return nil
+        elsif response.code == 201
+          return nil
         else
           response.body.present? ? JSON.parse(response.body) : nil
         end

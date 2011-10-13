@@ -38,6 +38,10 @@ module Dada
       def flush
         cache_server.flush
       end
+
+      def fetch(key,&block)
+        cache_server.fetch(key,&block)
+      end
     end
 
     module CacheServer
