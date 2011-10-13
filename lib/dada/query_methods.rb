@@ -25,7 +25,7 @@ module Dada
       end
 
       def get_data(key, method=:get)
-        if cachable?
+        if cacheable?
           cache.fetch(key) do
             handle_request(method, key)
           end
@@ -47,7 +47,7 @@ module Dada
       end
 
       if handle_response(response)
-        cache.set(singular_path, self.to_json) if cachable?
+        cache.set(singular_path, self.to_json) if cacheable?
       end
     end
 

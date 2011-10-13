@@ -2,6 +2,10 @@ require 'spec_helper'
 
 # Integration tests :)
 describe Dada::Base do
+  before(:each) do
+    Dummy.resource_suffix = ''
+  end
+
   describe "Dummy, our ever faitful test subject" do
     # Some hight level tests, due to the complexity this makes it a lot easier to refactor
     let(:dummy) { build(:dummy) }
@@ -19,7 +23,7 @@ describe Dada::Base do
     let(:dummy2) { build(:dummy) }
     subject { Dummy}
 
-    it { should be_cachable }
+    it { should be_cacheable }
 
     context "#find" do
       it "should find dummy" do

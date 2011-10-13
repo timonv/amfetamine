@@ -71,8 +71,12 @@ module Dada
 
     # Checks if object is cachable
     # TODO implement
-    def self.cachable?
+    def self.cacheable?
       true
+    end
+
+    def cacheable?
+      self.class.cacheable?
     end
 
     # Checks to see if an object is valid or not
