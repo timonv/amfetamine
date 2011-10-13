@@ -2,10 +2,6 @@ require 'spec_helper'
 
 describe Dada::RestHelpers do
   context "methods" do
-    before(:each) do
-      # Needed because rspec caches classes across runs (thank god it does)
-      Dummy.resource_suffix = ''
-    end
 
     it "plural_path" do
       Dummy.rest_path.should ==('/dummies')

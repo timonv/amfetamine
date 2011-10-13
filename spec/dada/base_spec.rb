@@ -19,7 +19,7 @@ describe Dada::Base do
     let(:dummy2) { build(:dummy) }
     subject { Dummy}
 
-    it { should be_cachable }
+    it { should be_cacheable }
 
     context "#find" do
       it "should find dummy" do

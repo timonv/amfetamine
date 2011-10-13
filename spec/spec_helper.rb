@@ -15,5 +15,6 @@ end
 RSpec.configure do |config|
   config.mock_with :rspec
   config.after(:each) { Dada::Config.memcached_instance.flush }
+  config.before(:each) { Dummy.resource_suffix = '' }
 end
 
