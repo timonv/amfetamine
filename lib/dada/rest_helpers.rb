@@ -72,6 +72,7 @@ module Dada
       # Returns a hash with human readable status and parsed body
       def parse_response(response)
         status = RESPONSE_STATUSES.fetch(response.code) { raise "Response not known" }
+        raise Dada::RecordNotFound if status == :notfound
         body = response.parsed_response
         { :status => status, :body => body }
       end

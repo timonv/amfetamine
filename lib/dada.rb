@@ -7,5 +7,5 @@ require "dada/base" # Basics
 require "dada/config" # Configuration class
 
 module Dada
-  # Your code goes here...
+  class RecordNotFound < Error; end
 end
