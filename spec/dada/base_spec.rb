@@ -113,6 +113,35 @@ describe Dada::Base do
       end
     end
 
+    context "#save" do
+      before(:each) do
+        dummy.send(:notsaved=, true)
+      end
+
+      it "should update the id if data is received from post" do
+        old_id = dummy.id
+        stub_post_response(dummy) do
+          dummy.send(:id=, nil)
+          dummy.save
+        end
+        dummy.id.should == old_id
+        dummy.attributes[:id].should == old_id
+      end
+
+      it "should update attributes if data is received from update" do
+        dummy.send(:notsaved=, false)
+        old_id = dummy.id
+        dummy.title = "BLABLABLA"
+        stub_update_response(dummy) do
+          dummy.title = "BLABLABLA"
+          dummy.save
+        end
+        dummy.id.should == old_id
+        dummy.title.should == "BLABLABLA"
+        dummy.attributes[:title] = "BLABLABLA"
+      end
+    end
+
     context "#delete" do
       before(:each) do
         dummy.send(:notsaved=, false)
@@ -132,7 +161,7 @@ describe Dada::Base do
           dummy.destroy
         end
         dummy.should_not be_new
-        dummy.errors.messages.should == { :delete => ['Something wen\'t wrong'] }
+        dummy.should_not be_cached
       end
     end
   end

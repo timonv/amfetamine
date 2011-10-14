@@ -28,26 +28,26 @@ def stub_nil_response
   FakeWeb.clean_registry
 end
 
-def stub_post_response
-  FakeWeb.register_uri(:post, "http://test.local/dummies", :body => {:bla => "Rails has crap too in the body!"}.to_json, :status => ["201", "Object created"], :content_type => 'application/json')
+def stub_post_response(object=nil)
+  FakeWeb.register_uri(:post, "http://test.local/dummies", :body => object ? object.to_json : nil, :status => ["201", "Object created"], :content_type => 'application/json')
   yield
   FakeWeb.clean_registry
 end
 
 def stub_post_errornous_response
-  FakeWeb.register_uri(:post, "http://test.local/dummies", :body => {:description => 'can\'t be empty'}.to_json, :status => ["400", "Validation Errors"], :content_type => 'application/json')
+  FakeWeb.register_uri(:post, "http://test.local/dummies", :body => {:description => 'can\'t be empty'}.to_json, :status => ["422", "Validation Errors"], :content_type => 'application/json')
   yield
   FakeWeb.clean_registry
 end
 
-def stub_update_response
-  FakeWeb.register_uri(:put, %r|http://test\.local/dummies/\d*|, :body => nil, :status => ["200", "Object updated"], :content_type => 'application/json')
+def stub_update_response(object=nil)
+  FakeWeb.register_uri(:put, %r|http://test\.local/dummies/\d*|, :body => object ? object.to_json : nil, :status => ["200", "Object updated"], :content_type => 'application/json')
   yield
   FakeWeb.clean_registry
 end
 
 def stub_update_errornous_response
-  FakeWeb.register_uri(:put, %r|http://test\.local/dummies/\d*|, :body => {:title => 'can\'t be empty'}.to_json, :status => ["400", "Validation Errors"], :content_type => 'application/json')
+  FakeWeb.register_uri(:put, %r|http://test\.local/dummies/\d*|, :body => {:title => 'can\'t be empty'}.to_json, :status => ["422", "Validation Errors"], :content_type => 'application/json')
   yield
   FakeWeb.clean_registry
 end
@@ -59,7 +59,7 @@ def stub_delete_response
 end
 
 def stub_delete_errornous_response
-  FakeWeb.register_uri(:delete, %r|http://test\.local/dummies/\d*|, :body => {:delete => 'Something wen\'t wrong'}.to_json, :status => ["400", "Validation Errors"], :content_type => 'application/json')
+  FakeWeb.register_uri(:delete, %r|http://test\.local/dummies/\d*|, :body => nil, :status => ["500", "Can't delete it :("], :content_type => 'application/json')
   yield
   FakeWeb.clean_registry
 end

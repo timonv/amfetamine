@@ -11,13 +11,21 @@ module Dada
       def find(id)
         key = self.find_path(id)
         data = get_data(key)
-        build_object(data) if data
+        if data[:status] == :success
+          build_object(data[:body]) 
+        else
+          nil
+        end
       end
 
       def all
         key = self.rest_path
         data = get_data(key)
-        return data.map { |d| build_object(d) } if data
+        if data[:status] == :success
+          data[:body].map { |d| build_object(d) }
+        else
+          []
+        end
       end
 
       def create(args)
@@ -47,6 +55,7 @@ module Dada
       end
 
       if handle_response(response)
+        update_attributes_from_response(response[:body])
         cache.set(singular_path, self.to_json) if cacheable?
       end
     end

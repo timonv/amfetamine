@@ -5,6 +5,8 @@ module Dada
   module RestHelpers
     class UnknownRESTMethod < Exception; end;
 
+    RESPONSE_STATUSES = { 422 => :errors, 404 => :notfound, 200 => :success, 201 => :created, 500 => :server_error }
+
     def rest_path
       self.class.rest_path
     end
@@ -21,11 +23,11 @@ module Dada
     # TODO: Needs refactoring, now just want to make the test pass =)
     # Making assumption here that when response is nil, it should have possitive result. Needs refactor when slept more
     def handle_response(response)
-      if response.nil?
+      if response[:status] == :success || response[:status] == :created
         self.instance_variable_set('@notsaved', false)
         true
-      else
-        response.each do |attr, mesg|
+      elsif response[:errors]
+        response[:body].each do |attr, mesg|
           errors.add(attr.to_sym, mesg )
         end
         false
@@ -68,17 +70,11 @@ module Dada
       end
 
       # handles response codes, should be refactored later to a more pretty solution without crap.
+      # Ofcourse this makes no sense yet. On the other hand, it works fine.
       def parse_response(response)
-        if response.code == 404
-          return nil
-        elsif response.code == 500
-          # Gracefully or not?
-          return nil
-        elsif response.code == 201
-          return nil
-        else
-          response.body.present? ? JSON.parse(response.body) : nil
-        end
+        status = RESPONSE_STATUSES.fetch(response.code) { raise "Response not known" }
+        body = response.body.present? ? JSON.parse(response.body) : nil
+        { :status => status, :body => body }
       end
 
       def rest_client

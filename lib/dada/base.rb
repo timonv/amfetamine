@@ -23,6 +23,13 @@ module Dada
       obj.tap { |obj| obj.instance_variable_set('@notsaved',false) } # because I don't want a global writer
     end
 
+    def update_attributes_from_response(args)
+      if args
+        args = args[self.class.name.downcase]
+        args.each { |k,v| self.send("#{k}=", v); self.attributes[k.to_sym] = v  }
+      end
+    end
+
     # Allows you to override the global caching server
     def self.memcached_instance=(value, options={})
       if value.is_a?(Array)
@@ -35,10 +42,13 @@ module Dada
     # Base method for creating objects
     def initialize(args={})
       @attributes = {}
-      self.id = args.delete(:id) || args.delete('id')
-      args.each { |k,v| self.public_send("#{k}=", v); self.attributes[k.to_sym] = v  }
+      args.each { |k,v| self.send("#{k}=", v); self.attributes[k.to_sym] = v  }
       @notsaved = true
       self
+    end
+
+    def is_attribute?(attr)
+      attributes.has_key?(attr.to_sym)
     end
 
     def persisted?
