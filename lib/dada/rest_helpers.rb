@@ -5,7 +5,7 @@ module Dada
   module RestHelpers
     class UnknownRESTMethod < Exception; end;
 
-    RESPONSE_STATUSES = { 422 => :errors, 404 => :notfound, 200 => :success, 201 => :created, 500 => :server_error }
+    RESPONSE_STATUSES = { 422 => :errors, 404 => :notfound, 200 => :success, 201 => :created, 500 => :server_error, 406 => :not_acceptable }
 
     def rest_path
       self.class.rest_path
@@ -69,11 +69,10 @@ module Dada
         parse_response(response)
       end
 
-      # handles response codes, should be refactored later to a more pretty solution without crap.
-      # Ofcourse this makes no sense yet. On the other hand, it works fine.
+      # Returns a hash with human readable status and parsed body
       def parse_response(response)
         status = RESPONSE_STATUSES.fetch(response.code) { raise "Response not known" }
-        body = response.body.present? ? JSON.parse(response.body) : nil
+        body = response.parsed_response
         { :status => status, :body => body }
       end
 

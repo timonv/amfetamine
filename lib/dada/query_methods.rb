@@ -9,22 +9,32 @@ module Dada
 
     module ClassMethods
       def find(id)
-        key = self.find_path(id)
-        data = get_data(key)
-        if data[:status] == :success
-          build_object(data[:body]) 
-        else
-          nil
+        begin
+          key = self.find_path(id)
+          data = get_data(key)
+          if data[:status] == :success
+            build_object(data[:body]) 
+          else
+            nil
+          end
+        rescue
+          cache.delete(key)
+          raise
         end
       end
 
       def all
-        key = self.rest_path
-        data = get_data(key)
-        if data[:status] == :success
-          data[:body].map { |d| build_object(d) }
-        else
-          []
+        begin
+          key = self.rest_path
+          data = get_data(key)
+          if data[:status] == :success
+            data[:body].map { |d| build_object(d) }
+          else
+            []
+          end
+        rescue
+          cache.delete(key)
+          raise
         end
       end
 
@@ -55,8 +65,14 @@ module Dada
       end
 
       if handle_response(response)
-        update_attributes_from_response(response[:body])
-        cache.set(singular_path, self.to_json) if cacheable?
+        begin
+          update_attributes_from_response(response[:body])
+          cache.delete(rest_path) if cacheable?
+          cache.set(singular_path, self.to_cacheable) if cacheable?
+        rescue
+          cache.delete(singular_path)
+          raise
+        end
       end
     end
 
@@ -68,7 +84,8 @@ module Dada
       response = self.class.handle_request(:delete, singular_path)
 
       if handle_response(response)
-        cache.delete(singular_path)
+        cache.delete(singular_path) if cacheable?
+        cache.delete(rest_path) if cacheable?
         self.notsaved = true # Because its a new object if the server side got deleted
         self.id = nil # Not saved? No ID.
       end
@@ -83,6 +100,15 @@ module Dada
 
     def new?
       @notsaved
+    end
+
+    def to_cacheable
+      {
+        :status => :success,
+        :body => {
+          self.class.name.downcase.to_sym => self.attributes
+        }
+      }
     end
 
     private
