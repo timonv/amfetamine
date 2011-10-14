@@ -91,7 +91,7 @@ describe Dada::Base do
 
       it "should update if response is succesful" do
         stub_update_response do
-          dummy.update({:title => 'zomg'})
+          dummy.update_attributes({:title => 'zomg'})
         end
         dummy.should_not be_new
         dummy.title.should eq('zomg')
@@ -100,7 +100,7 @@ describe Dada::Base do
 
       it "should show errors if response is not succesful" do
         stub_update_errornous_response do
-          dummy.update({:title => ''})
+          dummy.update_attributes({:title => ''})
         end
         dummy.should_not be_new
         dummy.errors.messages.should eq({:title => ['can\'t be blank']})
@@ -108,7 +108,7 @@ describe Dada::Base do
 
       it "should not do a request if the data doesn't change" do
         # Assumes that dummy.update would raise if not within stubbed request.
-        dummy.update({:title => dummy.title})
+        dummy.update_attributes({:title => dummy.title})
         dummy.errors.should be_empty
       end
     end
