@@ -2,10 +2,12 @@ require_relative 'configure.rb'
 require 'json'
 
 class Dummy < Dada::Base
-  @@children = []
+  @@children = [] # unrelated to relationships!
 
   attr_accessor :title, :description
   validates_presence_of :title, :description
+
+  has_many_resources :children
 
   def to_hash
     {

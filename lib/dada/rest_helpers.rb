@@ -8,7 +8,12 @@ module Dada
     RESPONSE_STATUSES = { 422 => :errors, 404 => :notfound, 200 => :success, 201 => :created, 500 => :server_error, 406 => :not_acceptable }
 
     def rest_path
-      self.class.rest_path
+      if self.class._relationship_parents
+        relationship = self.send(self.class._relationship_parents.first)
+        self.class.rest_path(:relationship => relationship)
+      else
+        self.class.rest_path
+      end
     end
 
     def self.included(base)
@@ -16,7 +21,12 @@ module Dada
     end
 
     def singular_path
-      self.class.find_path(self.id)
+      if self.class._relationship_parents
+        relationship = self.send(self.class._relationship_parents.first)
+        self.class.find_path(self.id, :relationship => relationship)
+      else
+        self.class.find_path(self.id)
+      end
     end
 
     # This method handles the save response
@@ -36,17 +46,28 @@ module Dada
 
 
     module ClassMethods
-      def rest_path(nested=false)
-        if nested
-          "/#{self.name.downcase.pluralize}"
+      def rest_path(params={})
+        result = if params[:relationship]
+          relationship = params[:relationship]
+          "/#{relationship.on.to_s.pluralize}/#{relationship.parent_id}/#{self.name.downcase.pluralize}"
         else
-          base_uri + "/#{self.name.downcase.pluralize}" + resource_suffix
+          "/#{self.name.downcase.pluralize}"
         end
+
+        result = base_uri + result unless params[:no_base_uri]
+        result = result + resource_suffix unless params[:no_resource_suffix]
+        return result
       end
 
-      def find_path(id)
-        base_uri + "#{self.rest_path(true)}/#{id.to_s}" + resource_suffix
+      def find_path(id, params={})
+        params_for_rest_path = params.merge({:no_base_uri => true, :no_resource_suffix => true})
+        result = "#{self.rest_path(params_for_rest_path)}/#{id.to_s}"
+
+        result = base_uri + result unless params[:no_base_uri]
+        result = result + resource_suffix unless params[:no_resource_suffix]
+        return result
       end
+
 
       def base_uri
         Dada::Config.base_uri

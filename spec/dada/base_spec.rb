@@ -31,9 +31,11 @@ describe Dada::Base do
       end
       
       it "should return nil if object not found" do
+        lambda {
         stub_nil_response do
           Dummy.find(dummy.id * 2).should be_nil
         end
+        }.should raise_exception(Dada::RecordNotFound)
       end
     end
 

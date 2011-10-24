@@ -4,6 +4,7 @@ module Dada
   class Base
     include Dada::RestHelpers
     include Dada::QueryMethods
+    include Dada::Relationships
 
     # Activemodel
     extend ActiveModel::Naming
@@ -42,6 +43,7 @@ module Dada
 
     # Base method for creating objects
     def initialize(args={})
+      super
       @attributes = {}
       args.each { |k,v| self.send("#{k}=", v); self.attributes[k.to_sym] = v  }
       @notsaved = true
@@ -98,8 +100,8 @@ module Dada
 
     # We need to redefine this so it doesn't check on object_id
     def ==(other)
-      self.instance_variables.all? do |i|
-        self.instance_variable_get(i) == other.instance_variable_get(i)
+      self.attributes.all? do |k,v|
+        self.attributes[k] == other.attributes[k]
       end
     end
 
