@@ -12,4 +12,14 @@ class Child < Dada::Base
   def self.children
     @@children ||= []
   end
+
+
+  def to_hash
+    {
+      :title => title,
+      :description => description,
+      :dummy_id => dummy_id,
+      :id => id
+    }
+  end
 end

@@ -7,26 +7,16 @@ module Dada
 
     RESPONSE_STATUSES = { 422 => :errors, 404 => :notfound, 200 => :success, 201 => :created, 500 => :server_error, 406 => :not_acceptable }
 
-    def rest_path
-      if self.class._relationship_parents
-        relationship = self.send(self.class._relationship_parents.first)
-        self.class.rest_path(:relationship => relationship)
-      else
-        self.class.rest_path
-      end
+    def rest_path(args={})
+      self.class.rest_path(args)
     end
 
     def self.included(base)
       base.extend ClassMethods
     end
 
-    def singular_path
-      if self.class._relationship_parents
-        relationship = self.send(self.class._relationship_parents.first)
-        self.class.find_path(self.id, :relationship => relationship)
-      else
-        self.class.find_path(self.id)
-      end
+    def singular_path(args={})
+      self.class.find_path(self.id, args)
     end
 
     # This method handles the save response
@@ -49,7 +39,7 @@ module Dada
       def rest_path(params={})
         result = if params[:relationship]
           relationship = params[:relationship]
-          "/#{relationship.on.to_s.pluralize}/#{relationship.parent_id}/#{self.name.downcase.pluralize}"
+          "/#{relationship.full_path}"
         else
           "/#{self.name.downcase.pluralize}"
         end

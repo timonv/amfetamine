@@ -8,9 +8,9 @@ module Dada
     end
 
     module ClassMethods
-      def find(id)
+      def find(id, opts={})
         begin
-          key = self.find_path(id)
+          key = opts[:nested_path] || self.find_path(id)
           data = get_data(key)
           if data[:status] == :success
             build_object(data[:body]) 
@@ -23,9 +23,9 @@ module Dada
         end
       end
 
-      def all
+      def all(opts={})
         begin
-          key = self.rest_path
+          key = opts[:nested_path] || self.rest_path
           data = get_data(key)
           if data[:status] == :success
             data[:body].map { |d| build_object(d) }

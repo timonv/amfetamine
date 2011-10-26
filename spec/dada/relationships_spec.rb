@@ -9,11 +9,13 @@ describe Dada::Relationships do
       dummy.children << child
 
       Child.rest_path.should == "/children"
-      child.rest_path.should == "/dummies/#{dummy.id}/children"
-      child.singular_path.should == "/dummies/#{dummy.id}/children/#{child.id}"
+      child.rest_path.should == "/children"
+      child.singular_path.should == "/children/#{child.id}"
+      dummy.children.rest_path.should == "/dummies/#{dummy.id}/children"
       Child.resource_suffix = '.json'
-      child.rest_path.should == "/dummies/#{dummy.id}/children.json"
-      child.singular_path.should == "/dummies/#{dummy.id}/children/#{child.id}.json"
+      child.rest_path.should == "/children.json"
+      dummy.children.rest_path.should == "/dummies/#{dummy.id}/children.json"
+      child.singular_path.should == "/children/#{child.id}.json"
       Child.resource_suffix = ''
     end
   end
@@ -21,6 +23,7 @@ describe Dada::Relationships do
   context "Adding and modifying children" do
     before(:each) do
       dummy.children << child
+      child.instance_variable_set(:@notsaved, false)
     end
 
     it "should be possible list all children" do
@@ -28,6 +31,37 @@ describe Dada::Relationships do
       Dummy.cache.flush
       dummy.children.should include(child)
     end
+
+    it "should be possible to get all children if not in memory" do
+      Dummy.cache.flush
+      new_dummy = nil
+      stub_single_response(dummy) do
+        new_dummy = Dummy.find(dummy.id)
+      end
+        
+      children = nil
+      stub_nested_all_response(dummy,child) do
+        children = new_dummy.children.all
+      end
+      children.should include(child)
+    end
+
+    it "should be possible to get a single child if not in memory" do
+      child.attributes[:dummy_id] = dummy.id # Lets fake we saved it.
+      Dummy.cache.flush
+      new_dummy = nil
+      stub_single_response(dummy) do
+        new_dummy = Dummy.find(dummy.id)
+      end
+
+      new_child = nil
+      stub_nested_single_response(dummy,child) do
+        new_child = new_dummy.children.find(child.id)
+      end
+
+      new_child.should == child
+    end
+
 
     it "should build new child if asked" do
       new_child = dummy.build_child

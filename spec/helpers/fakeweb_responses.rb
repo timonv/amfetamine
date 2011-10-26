@@ -67,3 +67,16 @@ def stub_delete_errornous_response
   yield
   FakeWeb.clean_registry
 end
+
+def stub_nested_all_response(parent,*children)
+  json = children.inject([]) { |acc, o| acc << o.as_json(:root => o.class.model_name.element, :methods => [:id]) }.to_json
+  FakeWeb.register_uri(:get, "http://test.local/#{parent.class.name.to_s.downcase.pluralize}/#{parent.id}/#{children.first.class.name.downcase.pluralize}", :body => json, :content_type => 'application/json')
+  yield
+  FakeWeb.clean_registry
+end
+
+def stub_nested_single_response(parent,child)
+  FakeWeb.register_uri(:get, %r|http://test\.local/#{parent.class.name.to_s.downcase.pluralize}/#{parent.id}/#{child.class.name.downcase.pluralize}/#{child.id}|, :body => { child.class.name.downcase.to_sym => child.to_hash }.to_json, :content_type => 'application/json')
+  yield
+  FakeWeb.clean_registry
+end
