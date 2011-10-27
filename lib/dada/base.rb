@@ -79,7 +79,8 @@ module Dada
     # Checks if object is cached
     # TODO this is not very efficient, but dalli doesn't provide a polling function :(
     def cached?
-      self.cache.get(self.singular_path) ? true : false
+      keys = belongs_to_relationships.collect { |r| r.singular_path } << self.singular_path
+      keys.any? { |k| cache.get(k) }
     end
 
     # Checks if object is cachable

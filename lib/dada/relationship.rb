@@ -12,17 +12,26 @@ module Dada
     end
 
     def << (other)
-      other.send("#{@from.class.name.downcase}_id=", @from.id)
+      other.send("#{from_singular_name}_id=", @from.id)
+      other.instance_variable_set("@#{from_singular_name}", Dada::Relationship.new(:on => @from, :from => other, :type => :belongs_to))
       @children << other
     end
 
     def on_class
-      Dada.parent.const_get(@on.to_s.gsub('/', '::').singularize.gsub('_','').capitalize)
+      if @on.is_a?(Symbol)
+        Dada.parent.const_get(@on.to_s.gsub('/', '::').singularize.gsub('_','').capitalize)
+      else
+        @on.class
+      end
     end
 
     # Id of object this relationship references
     def parent_id
-      @from.send(@on.to_s.downcase + "_id") if @type == :belongs_to
+      if @on.is_a?(Symbol)
+        @from.send(@on.to_s.downcase + "_id") if @type == :belongs_to
+      else
+        @on.id
+      end
     end
 
     # Id of the receiving object
@@ -34,8 +43,16 @@ module Dada
       @from.class.name.to_s.downcase.pluralize
     end
 
+    def from_singular_name
+      @from.class.name.to_s.downcase
+    end
+
     def on_plural_name
-      @on.to_s
+      if @on.is_a?(Symbol)
+        @on.to_s
+      else
+        @on.class.name.to_s.pluralize.downcase
+      end
     end
 
     def rest_path
@@ -46,8 +63,16 @@ module Dada
       on_class.find_path(id, :relationship => self)
     end
 
+    def singular_path
+      find_path(@from.id)
+    end
+
     def full_path
-      "#{from_plural_name}/#{from_id}/#{on_plural_name}"
+      if @type == :has_many
+        "#{from_plural_name}/#{from_id}/#{on_plural_name}"
+      elsif @type == :belongs_to
+        "#{on_plural_name}/#{parent_id}/#{from_plural_name}"
+      end
     end
 
     def each

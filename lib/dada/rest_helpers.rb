@@ -65,14 +65,15 @@ module Dada
 
       # wraps rest requests to the corresponding service
       # *emerging*
-      def handle_request(method, path, data = nil)
-        if(method == :get)
-          response = rest_client.get(path)
-        elsif(method == :post)
-          response = rest_client.post(path, :body => data)
-        elsif(method == :put)
-          response = rest_client.put(path, :body => data)
-        elsif(method == :delete)
+      def handle_request(method, path, opts={})
+        case method
+        when :get
+          response = rest_client.get(path, opts)
+        when :post
+          response = rest_client.post(path, opts)
+        when :put
+          response = rest_client.put(path, opts)
+        when :delete
           response = rest_client.delete(path)
         else
           raise UnknownRESTMethod, "handle_request only responds to get, put, post and delete"

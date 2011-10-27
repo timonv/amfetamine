@@ -56,8 +56,9 @@ def stub_update_errornous_response
   FakeWeb.clean_registry
 end
 
-def stub_delete_response
-  FakeWeb.register_uri(:delete, %r|http://test\.local/dummies/\d*|, :body => nil, :status => ["200", "Object deleted"], :content_type => 'application/json')
+def stub_delete_response(object=nil)
+  path = object ? object.rest_path : '/dummies'
+  FakeWeb.register_uri(:delete, %r|http://test\.local#{path}/\d*|, :body => nil, :status => ["200", "Object deleted"], :content_type => 'application/json')
   yield
   FakeWeb.clean_registry
 end
@@ -80,3 +81,19 @@ def stub_nested_single_response(parent,child)
   yield
   FakeWeb.clean_registry
 end
+
+def stub_conditional_all_response(*objects, query)
+  #json = JSON.generate(objects.inject([]) { |acc,o| acc <<  })
+  json = objects.inject([]) { |acc, o| acc << o.as_json(:root => o.class.model_name.element, :methods => [:id]) }.to_json
+  FakeWeb.register_uri(:get, %r|http://test.local/dummies\?.*|, :body => json, :content_type => 'application/json')
+  yield
+  FakeWeb.clean_registry
+end
+
+def stub_conditional_nested_all_response(parent,*children, query)
+  json = children.inject([]) { |acc, o| acc << o.as_json(:root => o.class.model_name.element, :methods => [:id]) }.to_json
+  FakeWeb.register_uri(:get, %r|http://test.local/#{parent.class.name.to_s.downcase.pluralize}/#{parent.id}/#{children.first.class.name.downcase.pluralize}\?.*|, :body => json, :content_type => 'application/json')
+  yield
+  FakeWeb.clean_registry
+end
+

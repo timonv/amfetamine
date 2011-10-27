@@ -19,6 +19,18 @@ module Dada
       end
     end
 
+    def belongs_to_relationship?
+      self.class._relation_parents && self.class_relationship_parents.any?
+    end
+
+    def belongs_to_relationships
+      if self.class._relationship_parents
+        self.class._relationship_parents.collect { |e| self.send(e) }
+      else
+        []
+      end
+    end
+
     module ClassMethods
       def has_many_resources(*klasses)
         self.class_eval do

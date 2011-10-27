@@ -1,3 +1,5 @@
+require 'active_support/core_ext' # For to_query
+
 module Dada
   module QueryMethods
     # Base method for finding objects
@@ -26,7 +28,8 @@ module Dada
       def all(opts={})
         begin
           key = opts[:nested_path] || self.rest_path
-          data = get_data(key)
+          data = get_data(key, opts[:conditions])
+
           if data[:status] == :success
             data[:body].map { |d| build_object(d) }
           else
@@ -38,17 +41,35 @@ module Dada
         end
       end
 
+      def cache_conditions(key, condition=nil)
+        return nil unless condition
+        conditions = cache.get("#{key}_conditions") || []
+        q_condition = condition.to_query
+
+        if !conditions.include?(q_condition)
+          conditions << condition.to_query
+          cache.set("#{key}_conditions", conditions)
+        end
+      end
+
       def create(args)
         self.new(args).tap(&:save)
       end
 
-      def get_data(key, method=:get)
+      def get_data(key, conditions=nil, method=:get)
         if cacheable?
-          cache.fetch(key) do
-            handle_request(method, key)
+          if conditions
+            cache_key = key + conditions.to_query
+            cache_conditions(key, conditions)
+          else
+            cache_key = key
+          end
+
+          cache.fetch(cache_key) do
+            handle_request(method, key, { :query => conditions } )
           end
         else
-          handle_request(method,key)
+          handle_request(method,key, { :query => conditions })
         end
       end
     end
@@ -59,18 +80,18 @@ module Dada
       end
 
       response = if self.new?
-        self.class.handle_request(:post, rest_path, self.to_json)
+        self.class.handle_request(:post, rest_path, {:body => self.to_json })
       else
-        self.class.handle_request(:put, singular_path, self.to_json)
+        self.class.handle_request(:put, singular_path, {:body => self.to_json})
       end
 
       if handle_response(response)
         begin
           update_attributes_from_response(response[:body])
-          cache.delete(rest_path) if cacheable?
+          clean_cache!
           cache.set(singular_path, self.to_cacheable) if cacheable?
         rescue
-          cache.delete(singular_path)
+          clean_cache!
           raise
         end
       end
@@ -84,10 +105,29 @@ module Dada
       response = self.class.handle_request(:delete, singular_path)
 
       if handle_response(response)
-        cache.delete(singular_path) if cacheable?
-        cache.delete(rest_path) if cacheable?
+        clean_cache!
         self.notsaved = true # Because its a new object if the server side got deleted
         self.id = nil # Not saved? No ID.
+      end
+    end
+
+    def clean_cache!
+      if cacheable?
+        cache.delete(singular_path)
+        cache.delete(rest_path)
+        belongs_to_relationships.each do |r|
+          cache.delete(r.singular_path)
+          cache.delete(r.rest_path)
+          condition_keys = cache.get("#{r.rest_path}_conditions") || []
+          condition_keys.each do |cc|
+            cache.delete(r.rest_path + cc)
+          end
+        end
+        
+        condition_keys = cache.get("#{rest_path}_conditions") || []
+        condition_keys.each do |cc|
+          cache.delete(rest_path + cc)
+        end
       end
     end
 
