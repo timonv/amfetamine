@@ -45,6 +45,7 @@ module Dada
     def initialize(args={})
       super
       @attributes = {}
+
       args.each { |k,v| self.send("#{k}=", v); self.attributes[k.to_sym] = v  }
       @notsaved = true
       self

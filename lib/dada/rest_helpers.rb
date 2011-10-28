@@ -26,7 +26,7 @@ module Dada
       if response[:status] == :success || response[:status] == :created
         self.instance_variable_set('@notsaved', false)
         true
-      elsif response[:errors]
+      elsif response[:status] == :errors
         response[:body].each do |attr, mesg|
           errors.add(attr.to_sym, mesg )
         end

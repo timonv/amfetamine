@@ -52,7 +52,7 @@ module Dada
         end
       end
 
-      def create(args)
+      def create(args={})
         self.new(args).tap(&:save)
       end
 
