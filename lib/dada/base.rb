@@ -20,7 +20,7 @@ module Dada
     # It parses the hash, builds the objects and sets new to false
     def self.build_object(args)
       args.stringify_keys!
-      args = args[self.name.downcase]
+      args = args[self.name.downcase] || {}
       obj = self.new(args)
       obj.tap { |obj| obj.instance_variable_set('@notsaved',false) } # because I don't want a global writer
     end
