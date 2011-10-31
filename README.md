@@ -29,12 +29,14 @@ Setup
 
 ### 1)
 Add it to your gemfile (not released yet):
+
 ```ruby
 gem 'dada'
 ```
 
 ### 2)
 Create an initializer dada_initializer.rb:
+
 ```ruby
 Dada::Config.configure do |config|
   config.memcached_instance = [HOST:PORT, OPTION1,OPTION2] || HOST:PORT
@@ -48,6 +50,7 @@ end
 
 ### 3)
 Configure your object:
+
 ```ruby
 class Banana < Dada::Base
   # You need an attribute accessor for each attribute your object has
@@ -62,6 +65,7 @@ end
 
 ### 4)
 Lastly, because I think its more semantic, you need to configure both your service and client to include the root element in JSON.
+
 ```ruby
 # config/initializers/wrap_parameters.rb
 ActiveSupport.on_load(:action_controller) do
