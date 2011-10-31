@@ -61,6 +61,7 @@ class Banana < Dada::Base
                  rest_client: BananaRestclient
 
 end
+```
 
 
 ### 4)
