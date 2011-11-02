@@ -19,15 +19,22 @@ module Dada
     # Builds an object from JSON, later on will need more (maybe object id? Or should that go in find?)
     # It parses the hash, builds the objects and sets new to false
     def self.build_object(args)
+      # Cache corruption guard
+      if args.nil?
+        clean_cache!
+        return
+      end
       args.stringify_keys!
-      args = args[self.name.downcase] || {}
+      args = args[class_name] || {}
       obj = self.new(args)
       obj.tap { |obj| obj.instance_variable_set('@notsaved',false) } # because I don't want a global writer
     end
 
     def update_attributes_from_response(args)
-      if args
-        args = args[self.class.name.downcase]
+      # We need to check this. If an api provides new data after an update, it will be set :-)
+      # Some apis return "nil" or something like that, so we need to double check its a hash
+      if args && args.is_a?(Hash) && args.has_key?(self.class_name)
+        args = args[self.class_name]
         args.each { |k,v| self.send("#{k}=", v); self.attributes[k.to_sym] = v  }
       end
     end
@@ -115,6 +122,14 @@ module Dada
       hash.each do |k,v|
         self.public_send("#{k.to_s}=", v)
       end
+    end
+
+    def class_name
+      self.class.class_name
+    end
+
+    def self.class_name
+      self.name.downcase
     end
 
     protected

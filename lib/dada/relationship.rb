@@ -49,7 +49,7 @@ module Dada
 
     def on_plural_name
       if @on.is_a?(Symbol)
-        @on.to_s
+        @on.to_s.pluralize
       else
         @on.class.name.to_s.pluralize.downcase
       end

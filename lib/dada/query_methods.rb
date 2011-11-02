@@ -31,7 +31,7 @@ module Dada
           data = get_data(key, opts[:conditions])
 
           if data[:status] == :success
-            data[:body].map { |d| build_object(d) }
+            data[:body].compact.map { |d| build_object(d) }
           else
             []
           end
@@ -80,20 +80,21 @@ module Dada
       end
 
       response = if self.new?
-        self.class.handle_request(:post, rest_path, {:body => self.to_json })
+        path = self.belongs_to_relationship? ? belongs_to_relationships.first.rest_path : rest_path
+        self.class.handle_request(:post, path, {:body => self.to_json })
       else
-        self.class.handle_request(:put, singular_path, {:body => self.to_json})
+        # Needs cleaning up, also needs to work with multiple belongs_to relationships (optional, I guess)
+        path = self.belongs_to_relationship? ? belongs_to_relationships.first.singular_path : singular_path
+        self.class.handle_request(:put, path, {:body => self.to_json})
       end
 
       if handle_response(response)
         begin
           update_attributes_from_response(response[:body])
+        ensure
           clean_cache!
-          cache.set(singular_path, self.to_cacheable) if cacheable?
-        rescue
-          clean_cache!
-          raise
         end
+        cache.set(singular_path, self.to_cacheable) if cacheable?
       end
     end
 
@@ -102,7 +103,8 @@ module Dada
         return false
       end
 
-      response = self.class.handle_request(:delete, singular_path)
+      path = self.belongs_to_relationship? ? belongs_to_relationships.first.singular_path : singular_path
+      response = self.class.handle_request(:delete, path)
 
       if handle_response(response)
         clean_cache!
@@ -131,6 +133,17 @@ module Dada
       end
     end
 
+    def self.clean_cache!
+      if cacheable?
+        cache.delete(rest_path)
+        condition_keys = cache.get("#{rest_path}_conditions") || []
+        condition_keys.each do |cc|
+          cache.delete(rest_path + cc)
+        end
+      end
+    end
+
+
     def update_attributes(attrs)
       return true if attrs.all? { |k,v| self.public_send(k) == v } # Don't update if no attributes change
       attrs.each { |k,v| self.public_send("#{k}=", v) }
@@ -152,11 +165,13 @@ module Dada
     end
 
     private
+
     def id=(id)
       @id = id
     end
-     def notsaved=(bool)
-       @notsaved = bool
-     end
+
+    def notsaved=(bool)
+      @notsaved = bool
+    end
   end
 end

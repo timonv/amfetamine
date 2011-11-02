@@ -85,7 +85,11 @@ module Dada
       def parse_response(response)
         status = RESPONSE_STATUSES.fetch(response.code) { raise "Response not known" }
         raise Dada::RecordNotFound if status == :notfound
-        body = response.parsed_response
+        body = if response.body && !(response.body.blank?)
+                 response.parsed_response
+               else
+                 self.to_json
+               end
         { :status => status, :body => body }
       end
 

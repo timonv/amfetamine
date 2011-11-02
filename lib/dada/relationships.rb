@@ -20,7 +20,7 @@ module Dada
     end
 
     def belongs_to_relationship?
-      self.class._relation_parents && self.class_relationship_parents.any?
+      self.class._relationship_parents && self.class._relationship_parents.any?
     end
 
     def belongs_to_relationships
@@ -42,10 +42,12 @@ module Dada
             parent_id_field = self.name.to_s.downcase.singularize + "_id"
 
             define_method("build_#{klass.to_s.singularize}") do |args={}|
+              args ||= {}
               Dada.parent.const_get(klass.to_s.gsub('/', '::').singularize.gsub('_','').capitalize).new(args.merge(parent_id_field => self.id))
             end
 
             define_method("create_#{klass.to_s.singularize}") do |args={}|
+              args ||= {}
               Dada.parent.const_get(klass.to_s.gsub('/', '::').singularize.gsub('_','').capitalize).create(args.merge(parent_id_field => self.id))
             end
           end

@@ -32,6 +32,9 @@ def stub_post_response(object=nil)
   path = '/dummies'
   if object
     path = object.rest_path
+    if object.belongs_to_relationship?
+      path = object.belongs_to_relationships.first.rest_path
+    end
   end
   FakeWeb.register_uri(:post, "http://test.local#{path}", :body => object ? object.to_json : nil, :status => ["201", "Object created"], :content_type => 'application/json')
   yield
@@ -57,7 +60,13 @@ def stub_update_errornous_response
 end
 
 def stub_delete_response(object=nil)
-  path = object ? object.rest_path : '/dummies'
+  path = '/dummies'
+  if object
+    path = object.rest_path
+    if object.belongs_to_relationship?
+      path = object.belongs_to_relationships.first.rest_path
+    end
+  end
   FakeWeb.register_uri(:delete, %r|http://test\.local#{path}/\d*|, :body => nil, :status => ["200", "Object deleted"], :content_type => 'application/json')
   yield
   FakeWeb.clean_registry
