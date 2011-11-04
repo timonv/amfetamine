@@ -4,8 +4,8 @@ module Dada
       base.extend(ClassMethods)
     end
 
-    def initialize(*args)
-      super(*args)
+    def initialize(args={})
+      #super(args)
       if self.class._relationship_children
         self.class._relationship_children.each do |klass|
           instance_variable_set("@#{klass}", Dada::Relationship.new(:on => klass, :from => self, :type => :has_many))

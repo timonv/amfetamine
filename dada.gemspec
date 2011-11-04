@@ -31,7 +31,6 @@ Gem::Specification.new do |s|
 
   # Runtime dependencies
   s.add_runtime_dependency "dalli"
-  s.add_runtime_dependency "yard"
   s.add_runtime_dependency "activesupport" # For helper methods
   s.add_runtime_dependency "activemodel" # For validations and AM like behaviour
 end
