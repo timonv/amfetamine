@@ -8,12 +8,12 @@ module Dada
       @type = opts[:type]
       @on = opts[:on] # Target class
       @from = opts[:from] # receiving object
-      @children = []
     end
 
     def << (other)
       other.send("#{from_singular_name}_id=", @from.id)
       other.instance_variable_set("@#{from_singular_name}", Dada::Relationship.new(:on => @from, :from => other, :type => :belongs_to))
+      @children ||= [] # No need to do a request here, but it needs to be an array if it isn't yet.
       @children << other
     end
 
@@ -76,12 +76,19 @@ module Dada
     end
 
     def each
-      @children.each { |c| yield c }
+      all.each { |c| yield c }
     end
 
     # Delegates the all method to child class with a nested path set
     def all(opts={})
-      @children = on_class.all({ :nested_path => rest_path }.merge(opts))
+      force = opts.delete(:force)
+      request = -> { on_class.all({ :nested_path => rest_path }.merge(opts)) }
+
+      @children = if force
+                    request.call
+                  else
+                    @children || request.call
+                  end
     end
 
     # Delegates the find method to child class with a nested path set
@@ -91,6 +98,7 @@ module Dada
 
 
     def include?(other)
+      self.all
       @children.include?(other)
     end
 

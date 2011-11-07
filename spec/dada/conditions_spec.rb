@@ -49,7 +49,7 @@ describe "Dada REST Helpers with conditions" do
     
     child.should_not be_cached
 
-    lambda {dummy.children.all(:conditions => query) }.should raise_exception(FakeWeb::NetConnectNotAllowedError)
+    lambda {dummy.children.all(:conditions => query, :force => true) }.should raise_exception(FakeWeb::NetConnectNotAllowedError)
   end
 end
 
