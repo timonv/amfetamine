@@ -13,7 +13,7 @@ module Dada
       def find(id, opts={})
         begin
           key = opts[:nested_path] || self.find_path(id)
-          data = get_data(key)
+          data = get_data(key, opts[:conditions])
           if data[:status] == :success
             build_object(data[:body]) 
           else

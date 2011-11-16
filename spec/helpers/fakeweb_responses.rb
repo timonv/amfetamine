@@ -106,3 +106,15 @@ def stub_conditional_nested_all_response(parent,*children, query)
   FakeWeb.clean_registry
 end
 
+def stub_conditional_single_response(object, query)
+  #json = JSON.generate(objects.inject([]) { |acc,o| acc <<  })
+  FakeWeb.register_uri(:get, %r|http://test.local/dummies/\d{1,2}\?.+|, :body => object.to_json, :content_type => 'application/json')
+  yield
+  FakeWeb.clean_registry
+end
+
+def stub_conditional_nested_single_response(parent,child, query)
+  FakeWeb.register_uri(:get, %r|http://test.local/#{parent.class.name.to_s.downcase.pluralize}/#{parent.id}/#{child.class.name.downcase.pluralize}/\d{1,2}\?.*|, :body => child.to_json, :content_type => 'application/json')
+  yield
+  FakeWeb.clean_registry
+end

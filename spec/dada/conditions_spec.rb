@@ -51,5 +51,56 @@ describe "Dada REST Helpers with conditions" do
 
     lambda {dummy.children.all(:conditions => query, :force => true) }.should raise_exception(FakeWeb::NetConnectNotAllowedError)
   end
-end
 
+  it "should work with normal resource #find" do
+    Dummy.cache.flush
+    query = { :title => 'Dummy' }
+    dummy = build(:dummy)
+
+    dummy.instance_variable_set('@notsaved',false)
+    result = nil
+    stub_conditional_single_response(dummy, query) do
+      result = Dummy.find(dummy.id, :conditions =>  query)
+    end
+
+    result.should == dummy
+
+    result2 = Dummy.find(dummy.id, :conditions => query)
+    result2.should == result
+
+    stub_delete_response(dummy) do
+      dummy.destroy
+    end
+
+    dummy.should_not be_cached
+  end
+
+
+  it "should work with nested resource #find" do
+    Dummy.cache.flush
+    Child.cache.flush
+
+    query = { :title => 'Dummy' }
+    dummy = build(:dummy)
+    child = build(:child)
+
+    dummy.instance_variable_set('@notsaved',false)
+    child.instance_variable_set('@notsaved',false)
+
+    result = nil
+    stub_conditional_nested_single_response(dummy,child, query) do
+      result = dummy.children.find(dummy.id, :conditions =>  query)
+    end
+
+    result.should == child
+
+    result2 = dummy.children.find(dummy.id, :conditions => query)
+    result2.should == result
+
+    stub_delete_response(child) do
+      child.destroy
+    end
+
+    child.should_not be_cached
+  end
+end
