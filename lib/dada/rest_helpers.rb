@@ -27,6 +27,7 @@ module Dada
         self.instance_variable_set('@notsaved', false)
         true
       elsif response[:status] == :errors
+        Dada.logger.warn "Errors from response"
         response[:body].each do |attr, mesg|
           errors.add(attr.to_sym, mesg )
         end
@@ -66,8 +67,8 @@ module Dada
       # wraps rest requests to the corresponding service
       # *emerging*
       def handle_request(method, path, opts={})
-        case method
-        when :get
+        Dada.logger.warn "Making request to #{path} with #{method}"
+        case method when :get
           response = rest_client.get(path, opts)
         when :post
           response = rest_client.post(path, opts)

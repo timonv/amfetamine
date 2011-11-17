@@ -1,4 +1,5 @@
 require "dada/version"
+require "dada/logger"
 require 'dada/relationship'
 require "dada/relationships"
 require "dada/caching_adapter" # Adapter that wraps memcache methods
@@ -10,4 +11,8 @@ require "dada/config" # Configuration class
 
 module Dada
   class RecordNotFound < Exception; end
+
+  def self.logger
+    Dada::Logger.instance
+  end
 end

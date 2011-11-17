@@ -65,7 +65,9 @@ module Dada
             cache_key = key
           end
 
+          Dada.logger.info "Fetching object from cache: #{cache_key}"
           cache.fetch(cache_key) do
+            Dada.logger.info "Miss! #{cache_key}"
             handle_request(method, key, { :query => conditions } )
           end
         else
