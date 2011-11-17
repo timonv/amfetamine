@@ -39,8 +39,16 @@ module Dada
         cache_server.flush
       end
 
-      def fetch(key,&block)
-        cache_server.fetch(key,&block)
+      def fetch(key)
+        #cache_server.fetch(key,&block)
+        val = get(key)
+        if val.nil? && block_given?
+          val = yield
+          add(key,val)
+        else
+          Dada.logger.info "Hit! #{key}"
+        end
+        val
       end
     end
 

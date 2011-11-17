@@ -3,7 +3,7 @@ module Dada
     class << self
       class ConfigurationInvalidException < Exception;end;
 
-      attr_reader :memcached_instance, :rest_client, :base_uri, :resource_suffix
+      attr_reader :memcached_instance, :rest_client, :base_uri, :resource_suffix, :logger
 
       def configure
         yield(self)
@@ -30,7 +30,6 @@ module Dada
         raise ConfigurationInvalidException, "Invalid value for resource suffix, should be a string" if !value.is_a?(String)
         @resource_suffix ||= value
       end
-
     end
   end
 end
