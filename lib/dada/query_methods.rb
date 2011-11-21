@@ -132,6 +132,7 @@ module Dada
         condition_keys.each do |cc|
           cache.delete(rest_path + cc)
         end
+        Dada.logger.info "Cleaned cache for #{self.class.name} with ID #{self.id}"
       end
     end
 
@@ -142,6 +143,7 @@ module Dada
         condition_keys.each do |cc|
           cache.delete(rest_path + cc)
         end
+        Dada.logger.info "Cleaned cache for #{self.class.name}"
       end
     end
 
