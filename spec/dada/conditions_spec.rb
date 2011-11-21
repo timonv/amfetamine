@@ -83,6 +83,7 @@ describe "Dada REST Helpers with conditions" do
     query = { :title => 'Dummy' }
     dummy = build(:dummy)
     child = build(:child)
+    dummy.children << child
 
     dummy.instance_variable_set('@notsaved',false)
     child.instance_variable_set('@notsaved',false)

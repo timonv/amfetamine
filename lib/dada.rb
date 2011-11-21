@@ -1,4 +1,5 @@
 require "dada/version"
+require "dada/exceptions"
 require "dada/logger"
 require 'dada/relationship'
 require "dada/relationships"
@@ -10,7 +11,6 @@ require "dada/base" # Basics
 require "dada/config" # Configuration class
 
 module Dada
-  class RecordNotFound < Exception; end
 
   def self.logger
     Dada::Logger.instance
