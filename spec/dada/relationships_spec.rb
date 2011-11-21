@@ -36,6 +36,11 @@ describe Dada::Relationships do
       child.instance_variable_set(:@notsaved, false)
     end
 
+    it "should create a relationship if parent id is passed in params" do
+      child2 = Child.new(:title => 'Child2', :dummy_id => dummy.id)
+      child2.dummy.should be_a(Dada::Relationship)
+    end
+
     it "should be possible list all children" do
       dummy.children.should include(child)
       Dummy.cache.flush
