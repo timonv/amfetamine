@@ -69,8 +69,10 @@ module Dada
 
     def full_path
       if @type == :has_many
+        raise InvalidPath if from_id == nil
         "#{from_plural_name}/#{from_id}/#{on_plural_name}"
       elsif @type == :belongs_to
+        raise InvalidPath if parent_id == nil
         "#{on_plural_name}/#{parent_id}/#{from_plural_name}"
       end
     end

@@ -3,7 +3,6 @@ require 'json'
 
 module Dada
   module RestHelpers
-    class UnknownRESTMethod < Exception; end;
 
     RESPONSE_STATUSES = { 422 => :errors, 404 => :notfound, 200 => :success, 201 => :created, 500 => :server_error, 406 => :not_acceptable }
 

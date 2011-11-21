@@ -12,13 +12,21 @@ describe Dada::Relationships do
       child.rest_path.should == "/children"
       child.singular_path.should == "/children/#{child.id}"
       dummy.children.rest_path.should == "/dummies/#{dummy.id}/children"
+
       Child.resource_suffix = '.json'
       child.rest_path.should == "/children.json"
       dummy.children.rest_path.should == "/dummies/#{dummy.id}/children.json"
       child.singular_path.should == "/children/#{child.id}.json"
+
       Child.resource_suffix = ''
       child.dummy.singular_path.should == "/dummies/#{dummy.id}/children/#{child.id}"
       dummy.children.find_path(child.id).should == "/dummies/#{dummy.id}/children/#{child.id}"
+    end
+
+    it "should raise error if nested path lacks parent id" do
+      child = Child.new({:title => 'test', :dummy_id => nil})
+
+      lambda { child.belongs_to_relationships.first.rest_path }.should raise_exception(Dada::InvalidPath)
     end
   end
 
