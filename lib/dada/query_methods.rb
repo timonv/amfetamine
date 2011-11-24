@@ -20,7 +20,7 @@ module Dada
             nil
           end
         rescue
-          cache.delete(key)
+          clean_cache!
           raise
         end
       end
@@ -36,7 +36,7 @@ module Dada
             []
           end
         rescue
-          cache.delete(key)
+          clean_cache!
           raise
         end
       end
@@ -72,6 +72,17 @@ module Dada
           end
         else
           handle_request(method,key, { :query => conditions })
+        end
+      end
+
+      def clean_cache!
+        if cacheable?
+          cache.delete(rest_path)
+          condition_keys = cache.get("#{rest_path}_conditions") || []
+          condition_keys.each do |cc|
+            cache.delete(rest_path + cc)
+          end
+          Dada.logger.info "Cleaned cache for #{self.class.name}"
         end
       end
     end
@@ -136,16 +147,7 @@ module Dada
       end
     end
 
-    def self.clean_cache!
-      if cacheable?
-        cache.delete(rest_path)
-        condition_keys = cache.get("#{rest_path}_conditions") || []
-        condition_keys.each do |cc|
-          cache.delete(rest_path + cc)
-        end
-        Dada.logger.info "Cleaned cache for #{self.class.name}"
-      end
-    end
+
 
 
     def update_attributes(attrs)

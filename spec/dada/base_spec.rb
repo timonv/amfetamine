@@ -167,4 +167,15 @@ describe Dada::Base do
       end
     end
   end
+
+  describe "Features and bugs" do
+    it "should raise an exception if cached args are nil" do
+      lambda { Dummy.build_object(nil) }.should raise_exception(Dada::InvalidCacheData)
+    end
+
+    it "should raise an exception if cached args do not contain an ID" do
+      lambda { Dummy.build_object(:no_id => 'present') }.should raise_exception(Dada::InvalidCacheData)
+    end
+  end
+      
 end

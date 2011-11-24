@@ -20,12 +20,8 @@ module Dada
     # It parses the hash, builds the objects and sets new to false
     def self.build_object(args)
       # Cache corruption guard
-      if args.nil?
-        clean_cache!
-        return
-      end
-      args.stringify_keys!
-      args = args[class_name] || {}
+      args = normalize_cache_data(args)
+
       obj = self.new(args)
       obj.tap { |obj| obj.instance_variable_set('@notsaved',false) } # because I don't want a global writer
     end
@@ -141,5 +137,14 @@ module Dada
       self.class.cache
     end
 
+    def self.normalize_cache_data(args)
+      # Validation predicates
+      raise InvalidCacheData, "Empty data" if args.nil?
+      args.stringify_keys!
+      args = args[class_name]
+      # TODO remove [:id], stringify_keys! _should_ nail this.
+      raise InvalidCacheData, "No object or ID #{args}"  unless args.present? && (args["id"] || args[:id])
+      args
+    end
   end
 end
