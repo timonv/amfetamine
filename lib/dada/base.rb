@@ -29,6 +29,8 @@ module Dada
     def update_attributes_from_response(args)
       # We need to check this. If an api provides new data after an update, it will be set :-)
       # Some apis return "nil" or something like that, so we need to double check its a hash
+
+      # TODO: Remove if statement because validation has been added
       if args && args.is_a?(Hash) && args.has_key?(self.class_name)
         args = args[self.class_name]
         args.each { |k,v| self.send("#{k}=", v); self.attributes[k.to_sym] = v  }
@@ -137,6 +139,7 @@ module Dada
       self.class.cache
     end
 
+    # TODO: Refactor > cache, only cache should know if data is valid.
     def self.normalize_cache_data(args)
       # Validation predicates
       raise InvalidCacheData, "Empty data" if args.nil?

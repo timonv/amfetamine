@@ -60,7 +60,7 @@ module Dada
 
 
       def base_uri
-        Dada::Config.base_uri
+        @base_uri || Dada::Config.base_uri
       end
 
       # wraps rest requests to the corresponding service
@@ -104,12 +104,17 @@ module Dada
       # Allows setting a different rest client per class
       def rest_client=(value)
         raise Dada::Config::ConfigurationInvalidException, 'Invalid value for rest_client' if ![:get,:put,:delete,:post].all? { |m| value.respond_to?(m) }
-        @rest_client ||= value
+        @rest_client = value
       end
 
       def resource_suffix=(value)
         raise Dada::Config::ConfigurationInvalidException, 'Invalid value for resource suffix' if !value.is_a?(String)
         @resource_suffix = value
+      end
+
+      def base_uri=(value)
+        raise Dada::Config::ConfigurationInvalidException, 'Invalid value for base uri' if !value.is_a?(String)
+        @base_uri = value
       end
     end
   end

@@ -4,4 +4,5 @@ module Dada
   class UnknownRESTMethod < Exception; end; # Only used if rest method is not handled by dada
   class RecordNotFound < Exception; end;
   class InvalidCacheData < Exception; end;
+  class MatcherNotImplemented < Exception; end;
 end
