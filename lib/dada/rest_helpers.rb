@@ -103,17 +103,17 @@ module Dada
 
       # Allows setting a different rest client per class
       def rest_client=(value)
-        raise Dada::Config::ConfigurationInvalidException, 'Invalid value for rest_client' if ![:get,:put,:delete,:post].all? { |m| value.respond_to?(m) }
+        raise Dada::ConfigurationInvalid, 'Invalid value for rest_client' if ![:get,:put,:delete,:post].all? { |m| value.respond_to?(m) }
         @rest_client = value
       end
 
       def resource_suffix=(value)
-        raise Dada::Config::ConfigurationInvalidException, 'Invalid value for resource suffix' if !value.is_a?(String)
+        raise Dada::ConfigurationInvalid, 'Invalid value for resource suffix' if !value.is_a?(String)
         @resource_suffix = value
       end
 
       def base_uri=(value)
-        raise Dada::Config::ConfigurationInvalidException, 'Invalid value for base uri' if !value.is_a?(String)
+        raise Dada::ConfigurationInvalid, 'Invalid value for base uri' if !value.is_a?(String)
         @base_uri = value
       end
     end

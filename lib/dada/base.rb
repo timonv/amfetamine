@@ -12,6 +12,9 @@ module Dada
     include ActiveModel::Serialization
     include ActiveModel::Serializers::JSON
 
+    # Testing
+    include Dada::TestHelpers
+
     attr_reader :id
     attr_accessor :attributes
 
@@ -144,7 +147,7 @@ module Dada
       # Validation predicates
       raise InvalidCacheData, "Empty data" if args.nil?
       args.stringify_keys!
-      args = args[class_name]
+      args = args[class_name] || args
       # TODO remove [:id], stringify_keys! _should_ nail this.
       raise InvalidCacheData, "No object or ID #{args}"  unless args.present? && (args["id"] || args[:id])
       args

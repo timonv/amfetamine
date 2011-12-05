@@ -1,4 +1,5 @@
 require "dada/version"
+require "dada/helpers/test_helpers" # Testing helper methods
 require "dada/exceptions"
 require "dada/logger"
 require 'dada/relationship'
