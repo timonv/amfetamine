@@ -1,5 +1,3 @@
-require 'fakeweb'
-
 module Dada
   module TestHelpers
     # Uses fakeweb to block all connections
