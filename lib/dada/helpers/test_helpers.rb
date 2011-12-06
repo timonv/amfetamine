@@ -10,9 +10,9 @@ module Dada
         self.rest_client = NeinNeinNein.new
       end
 
-      def stub_responses!(&block)
+      def stub_responses!
         prevent_external_connections!
-        rest_client.instance_eval(&block)
+        yield rest_client
       end
     end
   end
@@ -54,10 +54,10 @@ module Dada
   end
 
   class FakeResponse
-    def initialize(method, code, block)
+    def initialize(method, code2, block)
       @method = method
-      @response_code = code
-      @inner_body = block.call || {} # For some reason it hangs on nil, the bitch
+      @response_code = code2
+      @inner_body = block.call || {}
     end
 
     def code
