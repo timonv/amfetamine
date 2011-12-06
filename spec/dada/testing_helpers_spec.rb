@@ -30,12 +30,24 @@ describe "test_helpers" do
 
     it "should return give me correct response codes" do
       Dummy.stub_responses! do
-        post(201) { }
+        post(code: 201) { }
       end
 
       dummy = Dummy.new(title: 'valid', description: 'valid')
       dummy.valid?.should be_true
       dummy.save.should be_true
+    end
+
+    it "should also work with multiple paths" do
+      dummy = build(:dummy)
+
+      Dummy.stub_responses! do
+        get(code: 200, path: '/dummies/1') { dummy }
+        get(code: 200, path: '/dummies/') { [ dummy ] }
+      end
+
+      Dummy.find(1).should == dummy
+      Dummy.all.should == [dummy]
     end
   end
 end

@@ -31,13 +31,21 @@ module Dada
 
     def method_missing(method, *args, &block)
       if [:get,:post,:delete,:put].include?(method)
-        res = instance_variable_get("@#{method.to_s}")
+        # TODO: Dump and rewrite
+        path = (args.first.is_a?(Hash) ? args.first[:path] : args[0]) || 'default'
+        code = args.first.is_a?(Hash) ? args.first[:code] : 200
+        paths_with_values = instance_variable_get("@#{method.to_s}") || {}
+        
+        path.gsub!(/\/$/,'') #remove trailing slash
+
         if block_given?
-          res = FakeResponse.new(method, args.first, block)
-          instance_variable_set("@#{method.to_s}", res)
+          paths_with_values[path]= FakeResponse.new(method, code, block)
+          instance_variable_set("@#{method.to_s}", paths_with_values)
         end
 
-        return res if res
+        response = paths_with_values ? (paths_with_values[path] || paths_with_values['default']) : nil
+
+        return response if response
 
         raise Dada::ExternalConnectionsNotAllowed, "Tried to do #{method} with #{args}"
       else
@@ -50,8 +58,8 @@ module Dada
   class FakeResponse
     def initialize(method, code, block)
       @method = method
-      @response_code = code || 200
-      @inner_body = block.call || {}
+      @response_code = code
+      @inner_body = block.call || {} # For some reason it hangs on nil, the bitch
     end
 
     def code
