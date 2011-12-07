@@ -5,3 +5,4 @@ pkg/*
 Guardfile
 .yardoc
 doc/
+coverage/

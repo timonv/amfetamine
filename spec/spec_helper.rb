@@ -1,3 +1,5 @@
+require 'simplecov'
+SimpleCov.start
 require File.expand_path("../../lib/dada.rb", __FILE__)
 require 'helpers/active_model_lint'
 require 'dummy/child'
