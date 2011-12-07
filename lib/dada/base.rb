@@ -15,13 +15,21 @@ module Dada
     # Testing
     include Dada::TestHelpers
 
-    attr_reader :id, :attributes
+    attr_reader :attributes
+
+    def id=(val)
+      @attributes[:id] = val
+    end
+
+    def id
+      @attributes[:id]
+    end
+
+    private :'id='
 
 
 
     def self.dada_attributes(*attrs)
-      @_attributes = attrs
-
       attrs.each do |attr|
         define_method("#{attr}=") do |arg|
           @attributes[attr.to_sym] = arg
@@ -67,14 +75,13 @@ module Dada
     def initialize(args={})
       super
       @attributes = {}
-
-      args.each { |k,v| self.send("#{k}=", v); self.attributes[k.to_sym] = v  }
+      args.each { |k,v| self.send("#{k}=", v) }
       @notsaved = true
       self
     end
 
     def is_attribute?(attr)
-      @_attributes.include?(attr.to_sym)
+      @attributes.keys.include?(attr.to_sym)
     end
 
     def persisted?
@@ -124,6 +131,8 @@ module Dada
 
     # We need to redefine this so it doesn't check on object_id
     def ==(other)
+      return false unless self.id == other.id # Some APIs dont ALWAYS return an ID
+
       self.attributes.all? do |k,v|
         self.attributes[k] == other.attributes[k]
       end
