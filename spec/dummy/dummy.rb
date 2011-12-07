@@ -4,7 +4,7 @@ require 'json'
 class Dummy < Dada::Base
   @@children = [] # unrelated to relationships!
 
-  attr_accessor :title, :description
+  dada_attributes :title, :description
   validates_presence_of :title, :description
 
   has_many_resources :children

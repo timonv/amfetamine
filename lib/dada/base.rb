@@ -15,10 +15,24 @@ module Dada
     # Testing
     include Dada::TestHelpers
 
-    attr_reader :id
-    attr_accessor :attributes
+    attr_reader :id, :attributes
 
-   
+
+
+    def self.dada_attributes(*attrs)
+      @_attributes = attrs
+
+      attrs.each do |attr|
+        define_method("#{attr}=") do |arg|
+          @attributes[attr.to_sym] = arg
+        end
+
+        define_method("#{attr}") do
+          @attributes[attr.to_sym]
+        end
+      end
+    end
+
     # Builds an object from JSON, later on will need more (maybe object id? Or should that go in find?)
     # It parses the hash, builds the objects and sets new to false
     def self.build_object(args)
@@ -60,7 +74,7 @@ module Dada
     end
 
     def is_attribute?(attr)
-      attributes.has_key?(attr.to_sym)
+      @_attributes.include?(attr.to_sym)
     end
 
     def persisted?

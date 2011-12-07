@@ -53,9 +53,12 @@ describe "test_helpers" do
 
 
     it "should work with a let statement" do
-      Dummy.stub_responses! do |res|
-        res.get { test_dummy }
-      end
+      lambda {
+        Dummy.stub_responses! do |res|
+          res.get { test_dummy }
+          res.get(path: '/dummies') { [test_dummy] }
+        end
+      }.should_not raise_exception
     end
   end
 end

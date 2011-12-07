@@ -21,6 +21,18 @@ describe Dada::Base do
 
     it { should be_cacheable }
 
+    context "#attributes" do
+      it "should update attribute correctly if I edit it" do
+        dummy.title = "Oh a new title!"
+        dummy.attributes[:title].should == "Oh a new title!"
+      end
+
+      it "should include attributes in json" do
+        dummy.title = "Something new"
+        dummy.to_json.should match(/Something new/)
+      end
+    end
+
     context "#find" do
       it "should find dummy" do
         dummy.instance_variable_set('@notsaved', false)
