@@ -23,6 +23,7 @@ It is still in beta and under heavy development. Some features:
 * It supports conditions in the all method (find method asap), just provice a :conditions hash like you're used to.
 * Supports global HTTP and Memcached client as well as per object overriding.
 * If a request passes validation on client side and not on service side, the client properly sets error messages from the service.
+* Provides testing helpers
 
 Setup
 =====
@@ -53,8 +54,8 @@ Configure your object:
 
 ```ruby
 class Banana < Dada::Base
-  # You need an attribute accessor for each attribute your object has
-  attr_accessor :name, :shape, :color, :created_at, :updated_at
+  # You need to setup an attribute for each attribute your object has, apart from id (thats _mandatory_)
+  dada_attributes :name, :shape, :color, :created_at, :updated_at
 
   # OPTIONAL: Per object configuration
   configure_dada memcached_instance: 'localhost:11211',
@@ -65,7 +66,7 @@ end
 
 
 ### 4)
-Lastly, because I think its more semantic, you need to configure both your service and client to include the root element in JSON.
+NOW OPTIONAL: Because I think its more semantic, you need to configure both your service and client to include the root element in JSON.
 
 ```ruby
 # config/initializers/wrap_parameters.rb
@@ -101,9 +102,9 @@ Object.find(ID) # => returns object with ID, request: objects/ID
 ### Modifying data
 
 ```ruby
-Object.save
-Object.destroy
-Object.update_attributes(HASH)
+object.save
+object.destroy
+object.update_attributes(HASH)
 Object.create(HASH)
 ```
 
@@ -113,6 +114,24 @@ Cache Invalidation
 Objects are cached by request with the body as value. Request status codes are also cached. Every time an object is created, destroyed or updated, the plural cache is also invalidated.
 
 You can invalidate an object's cache any time by calling `clean_cache!` on an object. You can flush the whole cache by calling flush on either a class or Dada::Cache.
+
+Testing
+=======
+
+Dada provides a testing helper to easilly stub out responses from external services, so you can better control what response you get.
+
+```ruby
+# Rspec:
+before do
+  DadaObject.stub_responses! do |r|
+    # Setting the code / path is optional. If dada picks the wrong path, this will give you some weird errors.
+    r.post(path: '/bananas/', code: 201) { some_object }
+    r.get { some_object } # this sets to the default for gets on the rest_client this object uses
+  end
+end
+```
+
+Also, if you're using a cache, you should flush the cache before each test to avoid confusion.
 
 Building Custom Methods
 =======================
