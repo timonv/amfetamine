@@ -66,7 +66,7 @@ module Dada
       # wraps rest requests to the corresponding service
       # *emerging*
       def handle_request(method, path, opts={})
-        Dada.logger.warn "Making request to #{path} with #{method}"
+        Dada.logger.warn "Making request to #{path} with #{method} and #{opts.inspect}"
         case method when :get
           response = rest_client.get(path, opts)
         when :post
@@ -74,7 +74,7 @@ module Dada
         when :put
           response = rest_client.put(path, opts)
         when :delete
-          response = rest_client.delete(path)
+          response = rest_client.delete(path, opts)
         else
           raise UnknownRESTMethod, "handle_request only responds to get, put, post and delete"
         end
