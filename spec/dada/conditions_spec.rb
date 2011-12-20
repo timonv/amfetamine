@@ -9,7 +9,7 @@ describe "Dada REST Helpers with conditions" do
     dummy.instance_variable_set('@notsaved',false)
 
     result = nil
-    stub_conditional_all_response(dummy, query) do
+    stub_conditional_all_response(query, dummy) do
       result = Dummy.all(:conditions => query)
     end
     result2 = Dummy.all(:conditions => query) # No errors raised means it got it from the cache
@@ -35,7 +35,7 @@ describe "Dada REST Helpers with conditions" do
     child.instance_variable_set('@notsaved',false)
 
     result = nil
-    stub_conditional_nested_all_response(dummy, child, query) do
+    stub_conditional_nested_all_response(dummy, query, child) do
       result = dummy.children.all(:conditions => query)
     end
     result2 = dummy.children.all(:conditions => query) # No errors raised means it got it from the cache

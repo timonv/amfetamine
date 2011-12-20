@@ -151,8 +151,8 @@ module Dada
 
 
     def update_attributes(attrs)
-      return true if attrs.all? { |k,v| self.public_send(k) == v } # Don't update if no attributes change
-      attrs.each { |k,v| self.public_send("#{k}=", v) }
+      return true if attrs.all? { |k,v| self.send(k) == v } # Don't update if no attributes change
+      attrs.each { |k,v| self.send("#{k}=", v) }
       self.save
     end
 

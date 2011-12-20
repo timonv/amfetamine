@@ -2,8 +2,12 @@ require 'simplecov'
 SimpleCov.start
 require File.expand_path("../../lib/dada.rb", __FILE__)
 require 'helpers/active_model_lint'
+
+require 'dummy/dummy_rest_client'
+require 'dummy/configure'
 require 'dummy/child'
 require 'dummy/dummy'
+
 require 'fakeweb'
 require 'helpers/fakeweb_responses'
 require 'json'

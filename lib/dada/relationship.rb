@@ -84,7 +84,7 @@ module Dada
     # Delegates the all method to child class with a nested path set
     def all(opts={})
       force = opts.delete(:force)
-      request = -> { on_class.all({ :nested_path => rest_path }.merge(opts)) }
+      request = lambda { on_class.all({ :nested_path => rest_path }.merge(opts)) }
 
       @children = if force
                     request.call

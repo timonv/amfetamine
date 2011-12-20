@@ -18,11 +18,11 @@ module Dada
     attr_reader :attributes
 
     def id=(val)
-      @attributes[:id] = val
+      @attributes['id'] = val
     end
 
     def id
-      @attributes[:id]
+      @attributes['id']
     end
 
     private :'id='
@@ -32,11 +32,11 @@ module Dada
     def self.dada_attributes(*attrs)
       attrs.each do |attr|
         define_method("#{attr}=") do |arg|
-          @attributes[attr.to_sym] = arg
+          @attributes[attr.to_s] = arg
         end
 
         define_method("#{attr}") do
-          @attributes[attr.to_sym]
+          @attributes[attr.to_s]
         end
       end
     end
@@ -144,7 +144,7 @@ module Dada
 
     def self.configure_dada(hash)
       hash.each do |k,v|
-        self.public_send("#{k.to_s}=", v)
+        self.send("#{k.to_s}=", v)
       end
     end
 

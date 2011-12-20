@@ -34,4 +34,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "dalli"
   s.add_runtime_dependency "activesupport" # For helper methods
   s.add_runtime_dependency "activemodel" # For validations and AM like behaviour
+  s.add_runtime_dependency "json"
 end

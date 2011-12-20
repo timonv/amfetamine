@@ -1,6 +1,3 @@
-require_relative 'configure.rb'
-require 'json'
-
 class Dummy < Dada::Base
   @@children = [] # unrelated to relationships!
 

@@ -31,10 +31,10 @@ describe "test_helpers" do
 
     it "should return give me correct response codes" do
       Dummy.stub_responses! do |res|
-        res.post(code: 201) { }
+        res.post(:code => 201) { }
       end
 
-      dummy = Dummy.new(title: 'valid', description: 'valid')
+      dummy = Dummy.new(:title => 'valid', :description => 'valid')
       dummy.valid?.should be_true
       dummy.save.should be_true
     end
@@ -43,8 +43,8 @@ describe "test_helpers" do
       dummy = build(:dummy)
 
       Dummy.stub_responses! do |res|
-        res.get(code: 200, path: '/dummies/1') { dummy }
-        res.get(code: 200, path: '/dummies/') { [ dummy ] }
+        res.get(:code => 200, :path => '/dummies/1') { dummy }
+        res.get(:code => 200, :path => '/dummies/') { [ dummy ] }
       end
 
       Dummy.find(1).should == dummy
@@ -56,7 +56,7 @@ describe "test_helpers" do
       lambda {
         Dummy.stub_responses! do |res|
           res.get { test_dummy }
-          res.get(path: '/dummies') { [test_dummy] }
+          res.get(:path => '/dummies') { [test_dummy] }
         end
       }.should_not raise_exception
     end

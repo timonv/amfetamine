@@ -24,7 +24,7 @@ describe Dada::Base do
     context "#attributes" do
       it "should update attribute correctly if I edit it" do
         dummy.title = "Oh a new title!"
-        dummy.attributes[:title].should == "Oh a new title!"
+        dummy.attributes['title'].should == "Oh a new title!"
       end
 
       it "should include attributes in json" do

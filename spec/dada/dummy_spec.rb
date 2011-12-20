@@ -16,7 +16,7 @@ describe Dummy do
 
   context "Configuration" do
     it "should be configurable" do
-      Dummy.configure_dada :memcached_instance => ['localhost:11211', :key => 1], :rest_client => DummyRestClient, :resource_suffix => '.json'
+      Dummy.configure_dada :memcached_instance => ['localhost:11211', {:key => 1}], :rest_client => DummyRestClient, :resource_suffix => '.json'
       cs = Dummy.instance_variable_get('@cache_server')
       cs.should be_a(Dada::Cache)
       cs.instance_variable_get('@cache_server').instance_variable_get('@options').should include(:key => 1) # Annoying bug :/
