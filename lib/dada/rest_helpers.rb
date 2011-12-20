@@ -67,7 +67,8 @@ module Dada
       # *emerging*
       def handle_request(method, path, opts={})
         Dada.logger.warn "Making request to #{path} with #{method} and #{opts.inspect}"
-        case method when :get
+        case method
+        when :get
           response = rest_client.get(path, opts)
         when :post
           response = rest_client.post(path, opts)

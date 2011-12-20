@@ -188,6 +188,16 @@ describe Dada::Base do
     it "should raise an exception if cached args do not contain an ID" do
       lambda { Dummy.build_object(:no_id => 'present') }.should raise_exception(Dada::InvalidCacheData)
     end
+
+    it "should receive data when doing a post" do
+      Dummy.prevent_external_connections! do
+        dummy = build(:dummy)
+        Dummy.rest_client.should_receive(:post).with("/dummies", :body => dummy.to_json).
+          and_return(Dada::FakeResponse.new('post', 201, lambda { dummy }))
+        dummy.save
+      end
+    end
+
   end
       
 end

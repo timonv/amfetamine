@@ -6,10 +6,22 @@ module Dada
     end
 
     module ClassMethods
+      # Allows for preventing external connections, also in a block
       def prevent_external_connections!
+        @_old_rest_client = self.rest_client
         self.rest_client = NeinNeinNein.new
+
+        if block_given?
+          yield
+          self.rest_client = @_old_rest_client
+        end
       end
 
+      # Prevents external connections and provides a simple dsl
+      #
+      # Dummy.stub_responses! do |r|
+      #   r.get(code: 200, path: '/dummies') { dummy }
+      # end  
       def stub_responses!
         prevent_external_connections!
         yield rest_client
