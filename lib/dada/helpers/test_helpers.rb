@@ -77,9 +77,7 @@ module Dada
 
         return response if response
 
-        puts "PATH: #{path}"
-        puts "#{paths_with_values}"
-        raise Dada::ExternalConnectionsNotAllowed, "Tried to do #{method} with #{args}"
+        raise Dada::ExternalConnectionsNotAllowed, "Tried to do #{method} with #{args}\n Allowed paths: \n #{paths_with_values.keys.join("\n")}"
       else
         super
       end
