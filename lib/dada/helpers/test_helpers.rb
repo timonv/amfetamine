@@ -65,6 +65,7 @@ module Dada
         paths_with_values = instance_variable_get("@#{method.to_s}") || {}
 
         path.gsub!(/\/$/,'') #remove trailing slash
+        old_path = path
         path += query.to_s.strip
 
         if block_given?
@@ -72,7 +73,7 @@ module Dada
           instance_variable_set("@#{method.to_s}", paths_with_values)
         end
 
-        response = paths_with_values ? (paths_with_values[path] || paths_with_values['default']) : nil
+        response = paths_with_values ? (paths_with_values[path] || paths_with_values[old_path] || paths_with_values['default']) : nil
 
         return response if response
 
