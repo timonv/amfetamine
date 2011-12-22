@@ -23,6 +23,8 @@ end
 RSpec.configure do |config|
   config.mock_with :rspec
   config.after(:each) { Dada::Config.memcached_instance.flush }
+  config.after(:each) { Dummy.restore_rest_client; Child.restore_rest_client }
+  config.before(:each) { Dummy.save_rest_client; Child.save_rest_client }
   config.before(:each) { Dummy.resource_suffix = '' }
 end
 

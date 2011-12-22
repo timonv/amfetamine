@@ -8,13 +8,21 @@ module Dada
     module ClassMethods
       # Allows for preventing external connections, also in a block
       def prevent_external_connections!
-        @_old_rest_client = self.rest_client
+        save_rest_client
         self.rest_client = NeinNeinNein.new
 
         if block_given?
           yield
-          self.rest_client = @_old_rest_client
+          restore_rest_client
         end
+      end
+
+      def save_rest_client
+        @_old_rest_client = self.rest_client || @_old_rest_client
+      end
+
+      def restore_rest_client
+        self.rest_client = @_old_rest_client || self.rest_client
       end
 
       # Prevents external connections and provides a simple dsl
@@ -42,11 +50,22 @@ module Dada
     def method_missing(method, *args, &block)
       if [:get,:post,:delete,:put].include?(method)
         # TODO: Dump and rewrite
-        path = (args.first.is_a?(Hash) ? args.first[:path] : args[0]) || 'default'
-        code = args.first.is_a?(Hash) ? args.first[:code] : 200
+
+        # If this is the dsl calling
+        if args.first.is_a?(Hash) || args.empty?
+          opts = args.first || {}
+          path = opts[:path] || 'default'
+          code = opts[:code] || 200
+          query = opts[:query]
+        else # Else this is a request
+          path = args[0] || 'default'
+          query = args[1][:query]
+        end
+
         paths_with_values = instance_variable_get("@#{method.to_s}") || {}
-        
+
         path.gsub!(/\/$/,'') #remove trailing slash
+        path += query.to_s.strip
 
         if block_given?
           paths_with_values[path]= FakeResponse.new(method, code, block)
@@ -57,6 +76,8 @@ module Dada
 
         return response if response
 
+        puts "PATH: #{path}"
+        puts "#{paths_with_values}"
         raise Dada::ExternalConnectionsNotAllowed, "Tried to do #{method} with #{args}"
       else
         super
@@ -68,7 +89,7 @@ module Dada
   class FakeResponse
     def initialize(method, code2, block)
       @method = method
-      @response_code = code2
+      @response_code = code2 || 200
       @inner_body = block.call || {}
     end
 

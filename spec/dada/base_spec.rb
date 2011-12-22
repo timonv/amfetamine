@@ -189,6 +189,10 @@ describe Dada::Base do
       lambda { Dummy.build_object(:no_id => 'present') }.should raise_exception(Dada::InvalidCacheData)
     end
 
+    it "should raise correct exception is data is not expected format" do
+      lambda { Dummy.build_object([]) }.should raise_exception(Dada::InvalidCacheData)
+    end
+
     it "should receive data when doing a post" do
       Dummy.prevent_external_connections! do
         dummy = build(:dummy)

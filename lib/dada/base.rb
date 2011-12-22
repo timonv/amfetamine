@@ -169,6 +169,7 @@ module Dada
     def self.normalize_cache_data(args)
       # Validation predicates
       raise InvalidCacheData, "Empty data" if args.nil?
+      raise InvalidCacheData, "Invalid data: #{args.to_s}" if !args.is_a?(Hash)
       args.stringify_keys!
       args = args[class_name] || args
       # TODO remove [:id], stringify_keys! _should_ nail this.

@@ -53,24 +53,26 @@ describe "Dada REST Helpers with conditions" do
   end
 
   it "should work with normal resource #find" do
-    Dummy.cache.flush
-    query = { :title => 'Dummy' }
     dummy = build(:dummy)
+    query = { :title => 'Dummy' }
 
-    dummy.instance_variable_set('@notsaved',false)
-    result = nil
-    stub_conditional_single_response(dummy, query) do
-      result = Dummy.find(dummy.id, :conditions =>  query)
+    Dummy.stub_responses! do |r|
+      r.get(:path => "/dummies/#{dummy.id}", :code => 200) { dummy }
+      r.get(:path => "/dummies/#{dummy.id}", :code => 200, :query =>  query) { dummy }
+      r.delete(:path => "/dummies/#{dummy.id}", :code => 200) {}
     end
 
+    Dummy.cache.flush
+
+    dummy.instance_variable_set('@notsaved',false)
+
+    result = Dummy.find(dummy.id)
     result.should == dummy
 
     result2 = Dummy.find(dummy.id, :conditions => query)
     result2.should == result
 
-    stub_delete_response(dummy) do
-      dummy.destroy
-    end
+    dummy.destroy
 
     dummy.should_not be_cached
   end
