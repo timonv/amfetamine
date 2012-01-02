@@ -35,4 +35,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "activesupport" # For helper methods
   s.add_runtime_dependency "activemodel" # For validations and AM like behaviour
   s.add_runtime_dependency "json"
+  s.add_runtime_dependency "rake"
 end
