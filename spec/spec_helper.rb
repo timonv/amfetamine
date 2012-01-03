@@ -1,5 +1,8 @@
 require 'simplecov'
+require 'simplecov-rcov'
+SimpleCov.formatter = SimpleCov::Formatter::RcovFormatter
 SimpleCov.start
+
 require File.expand_path("../../lib/dada.rb", __FILE__)
 require 'helpers/active_model_lint'
 
