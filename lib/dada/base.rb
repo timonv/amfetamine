@@ -2,18 +2,25 @@ require 'active_model'
 
 module Dada
   class Base
-    include Dada::RestHelpers
-    include Dada::QueryMethods
-    include Dada::Relationships
-
     # Activemodel
     extend ActiveModel::Naming
+    extend ActiveModel::Callbacks
     include ActiveModel::Validations
     include ActiveModel::Serialization
     include ActiveModel::Serializers::JSON
 
+    #Callbacks
+    define_model_callbacks :create, :save
+
+
+    # Dada
+    include Dada::RestHelpers
+    include Dada::QueryMethods
+    include Dada::Relationships
+
     # Testing
     include Dada::TestHelpers
+
 
     attr_reader :attributes
 

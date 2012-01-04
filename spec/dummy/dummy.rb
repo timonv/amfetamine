@@ -6,6 +6,12 @@ class Dummy < Dada::Base
 
   has_many_resources :children
 
+  before_create :action_before_create
+  after_create :action_after_create
+
+  before_save :action_before_save
+  after_save :action_after_save
+
   def to_hash
     {
       :title => title,
@@ -23,6 +29,20 @@ class Dummy < Dada::Base
 
   def self.children
     @@children ||= []
+  end
+
+  def action_before_create
+    Dada.logger.warn "Yo, BEFORE CREATE called"
+  end
+
+  def action_after_create
+    Dada.logger.warn "Yo, AFTER CREATE called"
+  end
+
+  def action_before_save
+  end
+
+  def action_after_save
   end
 
 end

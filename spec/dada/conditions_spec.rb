@@ -15,7 +15,8 @@ describe "Dada REST Helpers with conditions" do
     result2 = Dummy.all(:conditions => query) # No errors raised means it got it from the cache
     result.should == result2
     result.should include(dummy)
-    stub_delete_response do
+    Dummy.prevent_external_connections! do |resource|
+      resource.delete {}
       dummy.destroy
     end
 

@@ -12,7 +12,7 @@ module Dada
         self.rest_client = NeinNeinNein.new
 
         if block_given?
-          yield
+          yield self.rest_client
           restore_rest_client
         end
       end

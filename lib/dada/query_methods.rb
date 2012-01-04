@@ -53,7 +53,9 @@ module Dada
       end
 
       def create(args={})
-        self.new(args).tap(&:save)
+        self.new(args).tap do |obj|
+          obj.run_callbacks(:create) { obj.save }
+        end
       end
 
       def get_data(key, conditions=nil, method=:get)
@@ -92,22 +94,24 @@ module Dada
         return false
       end
 
-      response = if self.new?
-        path = self.belongs_to_relationship? ? belongs_to_relationships.first.rest_path : rest_path
-        self.class.handle_request(:post, path, {:body => self.to_json })
-      else
-        # Needs cleaning up, also needs to work with multiple belongs_to relationships (optional, I guess)
-        path = self.belongs_to_relationship? ? belongs_to_relationships.first.singular_path : singular_path
-        self.class.handle_request(:put, path, {:body => self.to_json})
-      end
+      run_callbacks(:save) do
+        response = if self.new?
+                     path = self.belongs_to_relationship? ? belongs_to_relationships.first.rest_path : rest_path
+                     self.class.handle_request(:post, path, {:body => self.to_json })
+                   else
+                     # Needs cleaning up, also needs to work with multiple belongs_to relationships (optional, I guess)
+                     path = self.belongs_to_relationship? ? belongs_to_relationships.first.singular_path : singular_path
+                     self.class.handle_request(:put, path, {:body => self.to_json})
+                   end
 
-      if handle_response(response)
-        begin
-          update_attributes_from_response(response[:body])
-        ensure
-          clean_cache!
+        if handle_response(response)
+          begin
+            update_attributes_from_response(response[:body])
+          ensure
+            clean_cache!
+          end
+          cache.set(singular_path, self.to_cacheable) if cacheable?
         end
-        cache.set(singular_path, self.to_cacheable) if cacheable?
       end
     end
 
