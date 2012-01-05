@@ -48,6 +48,12 @@ module Dada
       end
     end
 
+    def self.dada_configure(hash)
+      hash.each do |k,v|
+        self.send("#{k.to_s}=", v)
+      end
+    end
+
     # Builds an object from JSON, later on will need more (maybe object id? Or should that go in find?)
     # It parses the hash, builds the objects and sets new to false
     def self.build_object(args)
@@ -149,11 +155,7 @@ module Dada
       @errors ||= ActiveModel::Errors.new(self)
     end
 
-    def self.configure_dada(hash)
-      hash.each do |k,v|
-        self.send("#{k.to_s}=", v)
-      end
-    end
+
 
     def class_name
       self.class.class_name
