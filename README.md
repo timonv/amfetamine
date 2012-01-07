@@ -145,7 +145,7 @@ r.find(1) # => object
 # You can go wilder with this as well so you can allow multiple requests. You can also use this dsl on the rest_client in #prevent_external_connections!
 Object.stub_external_responses! do |r|
   r.get(path: '/objects') { [object] } # Returns [object].to_json
-  r.get(path: "/objects/#{object.id}", code: 404) # Returns a resource not found
+  r.get(path: "/objects/#{object.id}", code: 404) {} # Returns a resource not found
 end
 ```
 
