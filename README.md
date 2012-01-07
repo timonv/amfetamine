@@ -23,7 +23,11 @@ It is still in beta and under heavy development. Some features:
 * It supports conditions in the all method (find method asap), just provice a :conditions hash like you're used to.
 * Supports global HTTP and Memcached client as well as per object overriding.
 * If a request passes validation on client side and not on service side, the client properly sets error messages from the service.
+<<<<<<< HEAD
 * Provides testing helpers
+=======
+* Dada supports some basic callbacks: before_save, after_save, around_save and before_create. More coming as needed.
+>>>>>>> c27fe818d168d5e2d336b3e6d2f3ab8963b413a1
 
 Setup
 =====
@@ -54,11 +58,15 @@ Configure your object:
 
 ```ruby
 class Banana < Dada::Base
+<<<<<<< HEAD
   # You need to setup an attribute for each attribute your object has, apart from id (thats _mandatory_)
+=======
+  # You need an attribute accessor for each attribute your object has
+>>>>>>> c27fe818d168d5e2d336b3e6d2f3ab8963b413a1
   dada_attributes :name, :shape, :color, :created_at, :updated_at
 
   # OPTIONAL: Per object configuration
-  configure_dada memcached_instance: 'localhost:11211',
+  dada_configure memcached_instance: 'localhost:11211',
                  rest_client: BananaRestclient
 
 end
@@ -66,7 +74,7 @@ end
 
 
 ### 4)
-NOW OPTIONAL: Because I think its more semantic, you need to configure both your service and client to include the root element in JSON.
+Lastly, because I think its more semantic, you need to configure both your service and client to include the root element in JSON. However, Dada will work fine without this.
 
 ```ruby
 # config/initializers/wrap_parameters.rb
@@ -138,6 +146,35 @@ Building Custom Methods
 
 Its important to note that caching might not work as expected when building custom methods. For now, please refer to the code.
 
+Testing
+=======
+
+Dada provides several testing helpers to make testing easier. I didn't think it would be wise to allow external connections, but I didn't want you to have to stub out all methods either.
+
+```ruby
+Object.prevent_external_connections! # Raises an error if any external connections are made on this object
+
+# You can provide a block as well, after the block the rest_client is set back to the default:
+Object.prevent_external_connections! do |rest_client|
+  rest_client.should_receive('get').with('/objects').and_return(objects.to_json)
+  Object.all
+end
+
+# You can also use a dsl to predefine responses up front on a per object basis. You can use rspec 'let' objects in the response as well.
+Object.stub_external_responses! do |r|
+  r.get {object}
+end
+
+r.all # => object, also will yield an error, expects an array
+r.find(1) # => object
+
+# You can go wilder with this as well so you can allow multiple requests. You can also use this dsl on the rest_client in #prevent_external_connections!
+Object.stub_external_responses! do |r|
+  r.get(path: '/objects') { [object] } # Returns [object].to_json
+  r.get(path: "/objects/#{object.id}", code: 404) {} # Returns a resource not found
+end
+```
+
 TODO
 
 Future Features
@@ -149,6 +186,8 @@ Future Features
 * Automatic determining of attributes and validations
 * Supporting any amount of nested relationships
 * Supporting interobject relationship (database versus service)
+* More callbacks
+* Better typecasting, it doesn't always work.
 
 Licence
 =======
