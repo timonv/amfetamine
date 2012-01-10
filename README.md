@@ -3,7 +3,7 @@ Amfetamine, A REST object abstractavaganza
 
 > Makes your API calls f-f-f-ast!
 
-Amfetamine is an abstract art movement from the early 1900s, also, it provides object abstraction for you REST services. It does what activeresource does, but better, with caching. Amfetamine is provided to your by Exvo, a cloud providing platform.
+Amfetamine adds an ActiveModel like interface to your REST services with support for any HTTParty client and caching using memcached.
 
 Features
 --------
