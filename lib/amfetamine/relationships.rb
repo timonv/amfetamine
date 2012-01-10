@@ -1,4 +1,4 @@
-module Dada
+module Amfetamine
   module Relationships
     def self.included(base)
       base.extend(ClassMethods)
@@ -8,13 +8,13 @@ module Dada
       #super(args)
       if self.class._relationship_children
         self.class._relationship_children.each do |klass|
-          instance_variable_set("@#{klass}", Dada::Relationship.new(:on => klass, :from => self, :type => :has_many))
+          instance_variable_set("@#{klass}", Amfetamine::Relationship.new(:on => klass, :from => self, :type => :has_many))
         end
       end
 
       if self.class._relationship_parents
         self.class._relationship_parents.each do |klass|
-          instance_variable_set("@#{klass}", Dada::Relationship.new(:on => klass, :from => self, :type => :belongs_to))
+          instance_variable_set("@#{klass}", Amfetamine::Relationship.new(:on => klass, :from => self, :type => :belongs_to))
         end
       end
     end
@@ -43,12 +43,12 @@ module Dada
 
             define_method("build_#{klass.to_s.singularize}") do |*args|
               args = args.shift || {}
-              Dada.parent.const_get(klass.to_s.gsub('/', '::').singularize.gsub('_','').capitalize).new(args.merge(parent_id_field => self.id))
+              Amfetamine.parent.const_get(klass.to_s.gsub('/', '::').singularize.gsub('_','').capitalize).new(args.merge(parent_id_field => self.id))
             end
 
             define_method("create_#{klass.to_s.singularize}") do |*args|
               args = args.shift || {}
-              Dada.parent.const_get(klass.to_s.gsub('/', '::').singularize.gsub('_','').capitalize).create(args.merge(parent_id_field => self.id))
+              Amfetamine.parent.const_get(klass.to_s.gsub('/', '::').singularize.gsub('_','').capitalize).create(args.merge(parent_id_field => self.id))
             end
           end
         end

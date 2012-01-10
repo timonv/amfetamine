@@ -5,7 +5,7 @@ describe "test_helpers" do
   describe "#prevent_external_connections!" do
     it "should raise exception if connections are tried to be made" do
       Dummy.prevent_external_connections!
-      lambda { Dummy.all }.should raise_exception(Dada::ExternalConnectionsNotAllowed)
+      lambda { Dummy.all }.should raise_exception(Amfetamine::ExternalConnectionsNotAllowed)
     end
 
     it "should return correct objects if responses are stubbed for #singular" do

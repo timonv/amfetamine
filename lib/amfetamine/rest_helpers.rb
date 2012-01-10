@@ -1,7 +1,7 @@
 require 'active_support/inflector'
 require 'json'
 
-module Dada
+module Amfetamine
   module RestHelpers
 
     RESPONSE_STATUSES = { 422 => :errors, 404 => :notfound, 200 => :success, 201 => :created, 500 => :server_error, 406 => :not_acceptable }
@@ -26,7 +26,7 @@ module Dada
         self.instance_variable_set('@notsaved', false)
         true
       elsif response[:status] == :errors
-        Dada.logger.warn "Errors from response"
+        Amfetamine.logger.warn "Errors from response"
         response[:body].each do |attr, mesg|
           errors.add(attr.to_sym, mesg )
         end
@@ -60,13 +60,13 @@ module Dada
 
 
       def base_uri
-        @base_uri || Dada::Config.base_uri
+        @base_uri || Amfetamine::Config.base_uri
       end
 
       # wraps rest requests to the corresponding service
       # *emerging*
       def handle_request(method, path, opts={})
-        Dada.logger.warn "Making request to #{path} with #{method} and #{opts.inspect}"
+        Amfetamine.logger.warn "Making request to #{path} with #{method} and #{opts.inspect}"
         case method
         when :get
           response = rest_client.get(path, opts)
@@ -85,7 +85,7 @@ module Dada
       # Returns a hash with human readable status and parsed body
       def parse_response(response)
         status = RESPONSE_STATUSES.fetch(response.code) { raise "Response not known" }
-        raise Dada::RecordNotFound if status == :notfound
+        raise Amfetamine::RecordNotFound if status == :notfound
         body = if response.body && !(response.body.blank?)
                  response.parsed_response
                else
@@ -95,26 +95,26 @@ module Dada
       end
 
       def rest_client
-        @rest_client || Dada::Config.rest_client
+        @rest_client || Amfetamine::Config.rest_client
       end
 
       def resource_suffix
-        @resource_suffix || Dada::Config.resource_suffix || ""
+        @resource_suffix || Amfetamine::Config.resource_suffix || ""
       end
 
       # Allows setting a different rest client per class
       def rest_client=(value)
-        raise Dada::ConfigurationInvalid, 'Invalid value for rest_client' if ![:get,:put,:delete,:post].all? { |m| value.respond_to?(m) }
+        raise Amfetamine::ConfigurationInvalid, 'Invalid value for rest_client' if ![:get,:put,:delete,:post].all? { |m| value.respond_to?(m) }
         @rest_client = value
       end
 
       def resource_suffix=(value)
-        raise Dada::ConfigurationInvalid, 'Invalid value for resource suffix' if !value.is_a?(String)
+        raise Amfetamine::ConfigurationInvalid, 'Invalid value for resource suffix' if !value.is_a?(String)
         @resource_suffix = value
       end
 
       def base_uri=(value)
-        raise Dada::ConfigurationInvalid, 'Invalid value for base uri' if !value.is_a?(String)
+        raise Amfetamine::ConfigurationInvalid, 'Invalid value for base uri' if !value.is_a?(String)
         @base_uri = value
       end
     end

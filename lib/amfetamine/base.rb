@@ -1,6 +1,6 @@
 require 'active_model'
 
-module Dada
+module Amfetamine
   class Base
     # Activemodel
     extend ActiveModel::Naming
@@ -13,13 +13,13 @@ module Dada
     define_model_callbacks :create, :save
 
 
-    # Dada
-    include Dada::RestHelpers
-    include Dada::QueryMethods
-    include Dada::Relationships
+    # amfetamine
+    include amfetamine::RestHelpers
+    include amfetamine::QueryMethods
+    include amfetamine::Relationships
 
     # Testing
-    include Dada::TestHelpers
+    include amfetamine::TestHelpers
 
 
     attr_reader :attributes
@@ -36,7 +36,7 @@ module Dada
 
 
 
-    def self.dada_attributes(*attrs)
+    def self.amfetamine_attributes(*attrs)
       attrs.each do |attr|
         define_method("#{attr}=") do |arg|
           @attributes[attr.to_s] = arg
@@ -48,7 +48,7 @@ module Dada
       end
     end
 
-    def self.dada_configure(hash)
+    def self.amfetamine_configure(hash)
       hash.each do |k,v|
         self.send("#{k.to_s}=", v)
       end
@@ -78,9 +78,9 @@ module Dada
     # Allows you to override the global caching server
     def self.memcached_instance=(value, options={})
       if value.is_a?(Array)
-        @cache_server = Dada::Cache.new(value.shift, value.first) # First element is the server, second must be the options
+        @cache_server = amfetamine::Cache.new(value.shift, value.first) # First element is the server, second must be the options
       else
-        @cache_server = Dada::Cache.new(value, options)
+        @cache_server = amfetamine::Cache.new(value, options)
       end
     end
 
@@ -167,7 +167,7 @@ module Dada
 
     protected
     def self.cache
-      @cache_server || Dada::Cache
+      @cache_server || amfetamine::Cache
     end
 
     def cache

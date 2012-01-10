@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Dada::Cache do
+describe Amfetamine::Cache do
   it "should return same data after all request has been made" do
     dummy = build(:dummy)
     dummy2 = build(:dummy)

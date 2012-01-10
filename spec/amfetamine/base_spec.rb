@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 # Integration tests :)
-describe Dada::Base do
+describe Amfetamine::Base do
   describe "Dummy, our ever faitful test subject" do
     # Some hight level tests, due to the complexity this makes it a lot easier to refactor
     let(:dummy) { build(:dummy) }
@@ -14,7 +14,7 @@ describe Dada::Base do
 
   end
 
-  describe "Class dummy, setup with dada::base" do
+  describe "Class dummy, setup with amfetamine::base" do
     let(:dummy) { build(:dummy) }
     let(:dummy2) { build(:dummy) }
     subject { Dummy}
@@ -47,7 +47,7 @@ describe Dada::Base do
         stub_nil_response do
           Dummy.find(dummy.id * 2).should be_nil
         end
-        }.should raise_exception(Dada::RecordNotFound)
+        }.should raise_exception(Amfetamine::RecordNotFound)
       end
     end
 
@@ -182,22 +182,22 @@ describe Dada::Base do
 
   describe "Features and bugs" do
     it "should raise an exception if cached args are nil" do
-      lambda { Dummy.build_object(nil) }.should raise_exception(Dada::InvalidCacheData)
+      lambda { Dummy.build_object(nil) }.should raise_exception(Amfetamine::InvalidCacheData)
     end
 
     it "should raise an exception if cached args do not contain an ID" do
-      lambda { Dummy.build_object(:no_id => 'present') }.should raise_exception(Dada::InvalidCacheData)
+      lambda { Dummy.build_object(:no_id => 'present') }.should raise_exception(Amfetamine::InvalidCacheData)
     end
 
     it "should raise correct exception is data is not expected format" do
-      lambda { Dummy.build_object([]) }.should raise_exception(Dada::InvalidCacheData)
+      lambda { Dummy.build_object([]) }.should raise_exception(Amfetamine::InvalidCacheData)
     end
 
     it "should receive data when doing a post" do
       Dummy.prevent_external_connections! do
         dummy = build(:dummy)
         Dummy.rest_client.should_receive(:post).with("/dummies", :body => dummy.to_json).
-          and_return(Dada::FakeResponse.new('post', 201, lambda { dummy }))
+          and_return(Amfetamine::FakeResponse.new('post', 201, lambda { dummy }))
         dummy.save
       end
     end

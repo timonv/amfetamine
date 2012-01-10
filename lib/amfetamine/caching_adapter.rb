@@ -1,4 +1,4 @@
-module Dada
+module Amfetamine
   # This adapter wraps methods around memcached (dalli) methods
   module CachingAdapter
     def self.included(base)
@@ -46,7 +46,7 @@ module Dada
           val = yield
           add(key,val)
         else
-          Dada.logger.info "Hit! #{key}"
+          Amfetamine.logger.info "Hit! #{key}"
         end
         val
       end
@@ -55,7 +55,7 @@ module Dada
     module CacheServer
       private
       def cache_server
-        Dada::Config.memcached_instance
+        Amfetamine::Config.memcached_instance
       end
 
   

@@ -1,4 +1,4 @@
-module Dada
+module Amfetamine
   module TestHelpers
     # Uses fakeweb to block all connections
     def self.included(base)
@@ -77,7 +77,7 @@ module Dada
 
         return response if response
 
-        raise Dada::ExternalConnectionsNotAllowed, "Tried to do #{method} with #{args}\n Allowed paths: \n #{paths_with_values.keys.join("\n")}"
+        raise Amfetamine::ExternalConnectionsNotAllowed, "Tried to do #{method} with #{args}\n Allowed paths: \n #{paths_with_values.keys.join("\n")}"
       else
         super
       end

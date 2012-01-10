@@ -1,11 +1,9 @@
-Dada, A REST object abstractavaganza
+Amfetamine, A REST object abstractavaganza
 ====================================
 
->or da·da (dä'dä) 
->n.
->A European artistic and literary movement (1916-1923) that flouted conventional aesthetic and cultural values by producing works marked by nonsense, travesty, and incongruity.
+> Makes your API calls f-f-f-ast!
 
-Dada is an abstract art movement from the early 1900s, also, it provides object abstraction for you REST services. It does what activeresource does, but better, with caching. Dada is provided to your by Exvo, a cloud providing platform.
+Amfetamine is an abstract art movement from the early 1900s, also, it provides object abstraction for you REST services. It does what activeresource does, but better, with caching. Amfetamine is provided to your by Exvo, a cloud providing platform.
 
 Features
 --------
@@ -24,7 +22,7 @@ It is still in beta and under heavy development. Some features:
 * Supports global HTTP and Memcached client as well as per object overriding.
 * If a request passes validation on client side and not on service side, the client properly sets error messages from the service.
 * Provides testing helpers
-* Dada supports some basic callbacks: before_save, after_save, around_save and before_create. More coming as needed.
+* Amfetamine supports some basic callbacks: before_save, after_save, around_save and before_create. More coming as needed.
 
 Setup
 =====
@@ -33,14 +31,14 @@ Setup
 Add it to your gemfile (not released yet):
 
 ```ruby
-gem 'dada'
+gem 'amfetamine'
 ```
 
 ### 2)
-Create an initializer dada_initializer.rb:
+Create an initializer amfetamine_initializer.rb:
 
 ```ruby
-Dada::Config.configure do |config|
+Amfetamine::Config.configure do |config|
   config.memcached_instance = [HOST:PORT, OPTION1,OPTION2] || HOST:PORT
   config.rest_client = REST_CLIENT
 
@@ -54,14 +52,21 @@ end
 Configure your object:
 
 ```ruby
-class Banana < Dada::Base
-  # You need to setup an attribute for each attribute your object has, apart from id (thats _mandatory_)
-=======
   # You need an attribute accessor for each attribute your object has
   dada_attributes :name, :shape, :color, :created_at, :updated_at
 
   # OPTIONAL: Per object configuration
   dada_configure memcached_instance: 'localhost:11211',
+=======
+class Banana < Amfetamine::Base
+  # You need to setup an attribute for each attribute your object has, apart from id (thats _mandatory_)
+=======
+  # You need an attribute accessor for each attribute your object has
+  amfetamine_attributes :name, :shape, :color, :created_at, :updated_at
+
+  # OPTIONAL: Per object configuration
+  amfetamine_configure memcached_instance: 'localhost:11211',
+>>>>>>> Fixing commit
                  rest_client: BananaRestclient
 
 end
@@ -69,7 +74,7 @@ end
 
 
 ### 4)
-Lastly, because I think its more semantic, you need to configure both your service and client to include the root element in JSON. However, Dada will work fine without this.
+Lastly, because I think its more semantic, you need to configure both your service and client to include the root element in JSON. However, Amfetamine will work fine without this.
 
 ```ruby
 # config/initializers/wrap_parameters.rb
@@ -91,7 +96,7 @@ parent.children.all # => Returns all nested resources, you can enumarate it with
 parent.children.all(:conditions => SOMETHING) # Works as expected
 parent.children << child # Sets a child to a parent, child still needs to be saved. This will append it to the current all array and set the parent_id, accessing #all will overwrite that array.
 parent.children.find(ID) # => Returns the nested child with ID
-children.parent # => returns a Dada::Relationship with only the parent
+children.parent # => returns a Amfetamine::Relationship with only the parent
 ```
 
 ### Querying
@@ -116,18 +121,19 @@ Cache Invalidation
 
 Objects are cached by request with the body as value. Request status codes are also cached. Every time an object is created, destroyed or updated, the plural cache is also invalidated.
 
-You can invalidate an object's cache any time by calling `clean_cache!` on an object. You can flush the whole cache by calling flush on either a class or Dada::Cache.
+You can invalidate an object's cache any time by calling `clean_cache!` on an object. You can flush the whole cache by calling flush on either a class or Amfetamine::Cache.
 
 Testing
 =======
 
-Dada provides a testing helper to easilly stub out responses from external services, so you can better control what response you get.
+Amfetamine provides a testing helper to easilly stub out responses from external services, so you can better control what response you get.
+>>>>>>> Fixing commit
 
 ```ruby
 # Rspec:
 before do
-  DadaObject.stub_responses! do |r|
-    # Setting the code / path is optional. If dada picks the wrong path, this will give you some weird errors.
+  AmfetamineObject.stub_responses! do |r|
+    # Setting the code / path is optional. If amfetamine picks the wrong path, this will give you some weird errors.
     r.post(path: '/bananas/', code: 201) { some_object }
     r.get { some_object } # this sets to the default for gets on the rest_client this object uses
   end
@@ -144,7 +150,8 @@ Its important to note that caching might not work as expected when building cust
 Testing
 =======
 
-Dada provides several testing helpers to make testing easier. I didn't think it would be wise to allow external connections, but I didn't want you to have to stub out all methods either.
+Amfetamine provides several testing helpers to make testing easier. I didn't think it would be wise to allow external connections, but I didn't want you to have to stub out all methods either.
+>>>>>>> Fixing commit
 
 ```ruby
 Object.prevent_external_connections! # Raises an error if any external connections are made on this object

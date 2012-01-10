@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Dada::RestHelpers do
+describe Amfetamine::RestHelpers do
   context "methods" do
 
     it "plural_path" do

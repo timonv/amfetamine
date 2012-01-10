@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Dada REST Helpers with conditions" do
+describe "Amfetamine REST Helpers with conditions" do
   it "should work regular #all" do
     Dummy.cache.flush # Just to be uber sure
 

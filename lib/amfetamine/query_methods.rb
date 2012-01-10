@@ -1,6 +1,6 @@
 require 'active_support/core_ext' # For to_query
 
-module Dada
+module Amfetamine
   module QueryMethods
     # Base method for finding objects
     # Should this be refactored to a different class that checks if cached and returns object?
@@ -67,9 +67,9 @@ module Dada
             cache_key = key
           end
 
-          Dada.logger.info "Fetching object from cache: #{cache_key}"
+          Amfetamine.logger.info "Fetching object from cache: #{cache_key}"
           cache.fetch(cache_key) do
-            Dada.logger.info "Miss! #{cache_key}"
+            Amfetamine.logger.info "Miss! #{cache_key}"
             handle_request(method, key, { :query => conditions } )
           end
         else
@@ -84,7 +84,7 @@ module Dada
           condition_keys.each do |cc|
             cache.delete(rest_path + cc)
           end
-          Dada.logger.info "Cleaned cache for #{self.model_name}"
+          Amfetamine.logger.info "Cleaned cache for #{self.model_name}"
         end
       end
     end
@@ -147,7 +147,7 @@ module Dada
         condition_keys.each do |cc|
           cache.delete(rest_path + cc)
         end
-        Dada.logger.info "Cleaned cache for #{self.class_name} with ID #{self.id}"
+        Amfetamine.logger.info "Cleaned cache for #{self.class_name} with ID #{self.id}"
       end
     end
 

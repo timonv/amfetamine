@@ -1,7 +1,7 @@
-class Dummy < Dada::Base
+class Dummy < Amfetamine::Base
   @@children = [] # unrelated to relationships!
 
-  dada_attributes :title, :description
+  amfetamine_attributes :title, :description
   validates_presence_of :title, :description
 
   has_many_resources :children
@@ -32,11 +32,11 @@ class Dummy < Dada::Base
   end
 
   def action_before_create
-    Dada.logger.warn "Yo, BEFORE CREATE called"
+    Amfetamine.logger.warn "Yo, BEFORE CREATE called"
   end
 
   def action_after_create
-    Dada.logger.warn "Yo, AFTER CREATE called"
+    Amfetamine.logger.warn "Yo, AFTER CREATE called"
   end
 
   def action_before_save

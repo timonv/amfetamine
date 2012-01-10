@@ -3,7 +3,7 @@ require 'simplecov-rcov'
 SimpleCov.formatter = SimpleCov::Formatter::RcovFormatter
 SimpleCov.start
 
-require File.expand_path("../../lib/dada.rb", __FILE__)
+require File.expand_path("../../lib/amfetamine.rb", __FILE__)
 require 'helpers/active_model_lint'
 
 require 'dummy/dummy_rest_client'
@@ -25,7 +25,7 @@ end
 
 RSpec.configure do |config|
   config.mock_with :rspec
-  config.after(:each) { Dada::Config.memcached_instance.flush }
+  config.after(:each) { Amfetamine::Config.memcached_instance.flush }
   config.after(:each) { Dummy.restore_rest_client; Child.restore_rest_client }
   config.before(:each) { Dummy.save_rest_client; Child.save_rest_client }
   config.before(:each) { Dummy.resource_suffix = '' }

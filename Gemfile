@@ -1,4 +1,4 @@
 source "http://rubygems.org"
 
-# Specify your gem's dependencies in dada.gemspec
+# Specify your gem's dependencies in amfetamine.gemspec
 gemspec

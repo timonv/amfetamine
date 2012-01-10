@@ -1,4 +1,4 @@
-module Dada
+module Amfetamine
   class Relationship
     include Enumerable
 
@@ -12,14 +12,14 @@ module Dada
 
     def << (other)
       other.send("#{from_singular_name}_id=", @from.id)
-      other.instance_variable_set("@#{from_singular_name}", Dada::Relationship.new(:on => @from, :from => other, :type => :belongs_to))
+      other.instance_variable_set("@#{from_singular_name}", Amfetamine::Relationship.new(:on => @from, :from => other, :type => :belongs_to))
       @children ||= [] # No need to do a request here, but it needs to be an array if it isn't yet.
       @children << other
     end
 
     def on_class
       if @on.is_a?(Symbol)
-        Dada.parent.const_get(@on.to_s.gsub('/', '::').singularize.gsub('_','').capitalize)
+        Amfetamine.parent.const_get(@on.to_s.gsub('/', '::').singularize.gsub('_','').capitalize)
       else
         @on.class
       end

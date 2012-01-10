@@ -1,11 +1,11 @@
 require 'singleton'
 
-module Dada
+module Amfetamine
   class Logger
     include Singleton
 
     def method_missing(method, args)
-      args = "[Dada] #{args.to_s}"
+      args = "[Amfetamine] #{args.to_s}"
       if defined?(Rails)
         Rails.logger.send(method,args)
       elsif defined?(Merb)

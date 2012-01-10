@@ -1,3 +1,3 @@
-module Dada
+module Amfetamine
   VERSION = "0.1.5"
 end

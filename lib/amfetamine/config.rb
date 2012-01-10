@@ -1,4 +1,4 @@
-module Dada
+module Amfetamine
   class Config
     class << self
 

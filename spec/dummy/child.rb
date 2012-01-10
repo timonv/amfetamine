@@ -1,4 +1,4 @@
-class Child < Dada::Base
+class Child < Amfetamine::Base
   @@children = [] # unrelated to relationships!
   attr_accessor :title, :description, :dummy_id
 
