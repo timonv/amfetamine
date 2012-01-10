@@ -14,12 +14,12 @@ module Amfetamine
 
 
     # amfetamine
-    include amfetamine::RestHelpers
-    include amfetamine::QueryMethods
-    include amfetamine::Relationships
+    include Amfetamine::RestHelpers
+    include Amfetamine::QueryMethods
+    include Amfetamine::Relationships
 
     # Testing
-    include amfetamine::TestHelpers
+    include Amfetamine::TestHelpers
 
 
     attr_reader :attributes
@@ -78,9 +78,9 @@ module Amfetamine
     # Allows you to override the global caching server
     def self.memcached_instance=(value, options={})
       if value.is_a?(Array)
-        @cache_server = amfetamine::Cache.new(value.shift, value.first) # First element is the server, second must be the options
+        @cache_server = Amfetamine::Cache.new(value.shift, value.first) # First element is the server, second must be the options
       else
-        @cache_server = amfetamine::Cache.new(value, options)
+        @cache_server = Amfetamine::Cache.new(value, options)
       end
     end
 
@@ -167,7 +167,7 @@ module Amfetamine
 
     protected
     def self.cache
-      @cache_server || amfetamine::Cache
+      @cache_server || Amfetamine::Cache
     end
 
     def cache

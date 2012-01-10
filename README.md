@@ -52,21 +52,12 @@ end
 Configure your object:
 
 ```ruby
-  # You need an attribute accessor for each attribute your object has
-  dada_attributes :name, :shape, :color, :created_at, :updated_at
-
-  # OPTIONAL: Per object configuration
-  dada_configure memcached_instance: 'localhost:11211',
-=======
 class Banana < Amfetamine::Base
   # You need to setup an attribute for each attribute your object has, apart from id (thats _mandatory_)
-=======
-  # You need an attribute accessor for each attribute your object has
   amfetamine_attributes :name, :shape, :color, :created_at, :updated_at
 
   # OPTIONAL: Per object configuration
   amfetamine_configure memcached_instance: 'localhost:11211',
->>>>>>> Fixing commit
                  rest_client: BananaRestclient
 
 end
@@ -127,7 +118,6 @@ Testing
 =======
 
 Amfetamine provides a testing helper to easilly stub out responses from external services, so you can better control what response you get.
->>>>>>> Fixing commit
 
 ```ruby
 # Rspec:
@@ -151,7 +141,6 @@ Testing
 =======
 
 Amfetamine provides several testing helpers to make testing easier. I didn't think it would be wise to allow external connections, but I didn't want you to have to stub out all methods either.
->>>>>>> Fixing commit
 
 ```ruby
 Object.prevent_external_connections! # Raises an error if any external connections are made on this object
