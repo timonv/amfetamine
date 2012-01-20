@@ -12,14 +12,6 @@ class Dummy < Amfetamine::Base
   before_save :action_before_save
   after_save :action_after_save
 
-  def to_hash
-    {
-      :title => title,
-      :description => description,
-      :id => id
-    }
-  end
-
 
   # Needed for proper ID tracking
   def initialize(args={})

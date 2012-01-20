@@ -97,11 +97,11 @@ module Amfetamine
       run_callbacks(:save) do
         response = if self.new?
                      path = self.belongs_to_relationship? ? belongs_to_relationships.first.rest_path : rest_path
-                     self.class.handle_request(:post, path, {:body => self.to_json })
+                     self.class.handle_request(:post, path, {:body => {class_name.to_sym => self.to_hash}})
                    else
                      # Needs cleaning up, also needs to work with multiple belongs_to relationships (optional, I guess)
                      path = self.belongs_to_relationship? ? belongs_to_relationships.first.singular_path : singular_path
-                     self.class.handle_request(:put, path, {:body => self.to_json})
+                     self.class.handle_request(:put, path, {:body => {class_name.to_sym => self.to_hash}})
                    end
 
         if handle_response(response)
@@ -169,7 +169,7 @@ module Amfetamine
       {
         :status => :success,
         :body => {
-          self.class.name.downcase.to_sym => self.attributes
+          class_name.to_sym => self.attributes
         }
       }
     end

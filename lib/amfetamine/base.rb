@@ -32,6 +32,15 @@ module Amfetamine
       @attributes['id']
     end
 
+    def to_hash
+      attributes
+    end
+
+    def to_hash_with_head
+      {class_name.to_sym => to_hash}
+    end
+
+
     private :'id='
 
 

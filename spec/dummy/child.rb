@@ -13,13 +13,4 @@ class Child < Amfetamine::Base
     @@children ||= []
   end
 
-
-  def to_hash
-    {
-      :title => title,
-      :description => description,
-      :dummy_id => dummy_id,
-      :id => id
-    }
-  end
 end

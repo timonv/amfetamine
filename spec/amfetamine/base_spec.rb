@@ -196,7 +196,7 @@ describe Amfetamine::Base do
     it "should receive data when doing a post" do
       Dummy.prevent_external_connections! do
         dummy = build(:dummy)
-        Dummy.rest_client.should_receive(:post).with("/dummies", :body => dummy.to_json).
+        Dummy.rest_client.should_receive(:post).with("/dummies", :body => dummy.to_hash_with_head).
           and_return(Amfetamine::FakeResponse.new('post', 201, lambda { dummy }))
         dummy.save
       end
