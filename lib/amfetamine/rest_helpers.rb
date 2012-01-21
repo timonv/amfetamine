@@ -26,7 +26,7 @@ module Amfetamine
         self.instance_variable_set('@notsaved', false)
         true
       elsif response[:status] == :errors
-        Amfetamine.logger.warn "Errors from response"
+        Amfetamine.logger.warn "Errors from response\n #{response.body}"
         response[:body].each do |attr, mesg|
           errors.add(attr.to_sym, mesg )
         end
