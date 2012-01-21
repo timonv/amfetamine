@@ -8,6 +8,7 @@ module Amfetamine
     include ActiveModel::Validations
     include ActiveModel::Serialization
     include ActiveModel::Serializers::JSON
+    include ActiveModel::Conversion
 
     #Callbacks
     define_model_callbacks :create, :save
