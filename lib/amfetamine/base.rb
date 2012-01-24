@@ -148,8 +148,8 @@ module Amfetamine
 
     # Checks to see if an object is valid or not
     def valid?
+      errors.clear
       run_callbacks(:validation) do
-        errors.clear
         run_validations!
       end
     end
