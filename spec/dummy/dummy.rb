@@ -12,6 +12,8 @@ class Dummy < Amfetamine::Base
   before_save :action_before_save
   after_save :action_after_save
 
+  before_validation :action_before_validate
+
 
   # Needed for proper ID tracking
   def initialize(args={})
@@ -35,6 +37,9 @@ class Dummy < Amfetamine::Base
   end
 
   def action_after_save
+  end
+
+  def action_before_validate
   end
 
 end

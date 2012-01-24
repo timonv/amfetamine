@@ -29,6 +29,14 @@ describe "Callbacks" do
       dummy.save
     end
   end
+
+  context "validate" do
+    it "should work" do
+      dummy = build(:dummy)
+      dummy.should_receive(:"action_before_validate")
+      dummy.valid?
+    end
+  end
 end
 
 

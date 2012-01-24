@@ -11,7 +11,7 @@ module Amfetamine
     include ActiveModel::Conversion
 
     #Callbacks
-    define_model_callbacks :create, :save
+    define_model_callbacks :create, :save, :validation
 
 
     # amfetamine
@@ -148,8 +148,10 @@ module Amfetamine
 
     # Checks to see if an object is valid or not
     def valid?
-      errors.clear
-      run_validations!
+      run_callbacks(:validation) do
+        errors.clear
+        run_validations!
+      end
     end
 
     # We need to redefine this so it doesn't check on object_id
