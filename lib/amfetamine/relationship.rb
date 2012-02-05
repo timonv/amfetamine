@@ -83,14 +83,7 @@ module Amfetamine
 
     # Delegates the all method to child class with a nested path set
     def all(opts={})
-      force = opts.delete(:force)
-      request = lambda { on_class.all({ :nested_path => rest_path }.merge(opts)) }
-
-      @children = if force
-                    request.call
-                  else
-                    @children || request.call
-                  end
+      on_class.all({ :nested_path => rest_path }.merge(opts))
     end
 
     # Delegates the find method to child class with a nested path set

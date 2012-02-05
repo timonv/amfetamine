@@ -34,6 +34,16 @@ describe Amfetamine::Relationships do
     before(:each) do
       dummy.children << child
       child.instance_variable_set(:@notsaved, false)
+
+      Child.stub_responses! do |allow|
+        allow.get(path:"/dummies/#{dummy.id}/children") { [child] }
+        allow.get(path:"/dummies/#{dummy.id}/children/#{child.id}") { child }
+        allow.post {}
+      end
+
+      Dummy.stub_responses! do |allow|
+        allow.get { dummy }
+      end
     end
 
     it "should create a relationship if parent id is passed in params" do
@@ -42,8 +52,6 @@ describe Amfetamine::Relationships do
     end
 
     it "should be possible list all children" do
-      dummy.children.should include(child)
-      Dummy.cache.flush
       dummy.children.should include(child)
     end
 
@@ -62,17 +70,8 @@ describe Amfetamine::Relationships do
     end
 
     it "should be possible to get a single child if not in memory" do
-      child.attributes[:dummy_id] = dummy.id # Lets fake we saved it.
-      Dummy.cache.flush
-      new_dummy = nil
-      stub_single_response(dummy) do
-        new_dummy = Dummy.find(dummy.id)
-      end
-
-      new_child = nil
-      stub_nested_single_response(dummy,child) do
-        new_child = new_dummy.children.find(child.id)
-      end
+      new_dummy = Dummy.find(dummy.id)
+      new_child = new_dummy.children.find(child.id)
 
       new_child.should == child
     end
@@ -86,17 +85,18 @@ describe Amfetamine::Relationships do
     end
 
     it "should create a new child if asked" do
-      new_child = nil
-      stub_post_response(child) do
-        new_child = dummy.create_child
-      end
-      puts new_child.inspect
+      Child.prevent_external_connections! do |allow|
+        allow.post(:code => 201) { child }
+        allow.get { [child] }
 
-      new_child.should_not be_new
-      new_child.should be_cached
-      dummy.children.should include(new_child)
-      Dummy.cache.flush
-      dummy.children.should include(new_child)
+        new_child = dummy.create_child(child.attributes)
+        new_child.should_not be_new
+        new_child.should be_cached
+
+        dummy.children.should include(new_child)
+        Dummy.cache.flush
+        dummy.children.should include(new_child)
+      end
     end
   end
 end
