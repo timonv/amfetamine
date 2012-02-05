@@ -24,6 +24,7 @@ module Amfetamine
 
 
     attr_reader :attributes
+    attr_accessor :cache_key
 
     def id=(val)
       @attributes['id'] = val
@@ -98,6 +99,7 @@ module Amfetamine
     def initialize(args={})
       super
       @attributes = {}
+      self.cache_key = self.class.recent_cache_key # Shows how this object was retrieved from cache
       args.each { |k,v| self.send("#{k}=", v) }
       @notsaved = true
       self
@@ -129,11 +131,9 @@ module Amfetamine
       persisted? ? id.to_s : nil
     end
 
-    # Checks if object is cached
-    # TODO this is not very efficient, but dalli doesn't provide a polling function :(
+    # Checks if object is cached by checking if a SINGULAR request was made to this object.
     def cached?
-      keys = belongs_to_relationships.collect { |r| r.singular_path } << self.singular_path
-      keys.any? { |k| cache.get(k) }
+      self.cache_key ? cache.get(self.cache_key).present? : false
     end
 
     # Checks if object is cachable

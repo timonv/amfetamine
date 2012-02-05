@@ -36,10 +36,12 @@ describe Amfetamine::Base do
     context "#find" do
       it "should find dummy" do
         dummy.instance_variable_set('@notsaved', false)
-        stub_single_response(dummy) do
-          Dummy.find(dummy.id).should == dummy
+        Dummy.prevent_external_connections! do |r|
+          r.get { dummy }
+          response = Dummy.find(dummy.id)
+          response.should == dummy
+          response.should be_cached
         end
-        dummy.should be_cached
       end
       
       it "should return nil if object not found" do
@@ -84,6 +86,7 @@ describe Amfetamine::Base do
         end
         new_dummy.should be_a(Dummy)
         new_dummy.should_not be_new
+        puts new_dummy.cache_key
         new_dummy.should be_cached
       end
 
@@ -104,12 +107,14 @@ describe Amfetamine::Base do
       end
 
       it "should update if response is succesful" do
-        stub_update_response do
+        Dummy.prevent_external_connections! do |allowed|
+          allowed.put {}
           dummy.update_attributes({:title => 'zomg'})
         end
+
         dummy.should_not be_new
         dummy.title.should eq('zomg')
-        dummy.should be_cached
+        dummy.should be_cached 
       end
 
       it "should show errors if response is not succesful" do

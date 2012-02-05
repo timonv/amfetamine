@@ -90,6 +90,7 @@ describe Amfetamine::Relationships do
       stub_post_response(child) do
         new_child = dummy.create_child
       end
+      puts new_child.inspect
 
       new_child.should_not be_new
       new_child.should be_cached

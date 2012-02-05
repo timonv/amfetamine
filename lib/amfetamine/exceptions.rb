@@ -4,6 +4,7 @@ module Amfetamine
   class UnknownRESTMethod < Exception; end; # Only used if rest method is not handled by amfetamine
   class RecordNotFound < Exception; end;
   class InvalidCacheData < Exception; end;
+  class RemoteConnectionError < Exception; end; # Raised when response handling fails
   #class MatcherNotImplemented < Exception; end;
   class ExternalConnectionsNotAllowed < Exception; end; # Used for test helpers if connection is not allowed and attempt is made to connect
 end

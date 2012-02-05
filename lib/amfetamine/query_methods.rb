@@ -10,12 +10,16 @@ module Amfetamine
     end
 
     module ClassMethods
+      def recent_cache_key
+        @recent_cache_key
+      end
+
       def find(id, opts={})
         begin
           key = opts[:nested_path] || self.find_path(id)
           data = get_data(key, opts[:conditions])
           if data[:status] == :success
-            build_object(data[:body]) 
+            val = build_object(data[:body]) 
           else
             nil
           end
@@ -31,7 +35,7 @@ module Amfetamine
           data = get_data(key, opts[:conditions])
 
           if data[:status] == :success
-            data[:body].compact.map { |d| build_object(d) }
+            vals = data[:body].compact.map { |d| build_object(d) }
           else
             []
           end
@@ -61,15 +65,15 @@ module Amfetamine
       def get_data(key, conditions=nil, method=:get)
         if cacheable?
           if conditions
-            cache_key = key + conditions.to_query
+            @recent_cache_key = key + conditions.to_query
             cache_conditions(key, conditions)
           else
-            cache_key = key
+            @recent_cache_key = key
           end
 
-          Amfetamine.logger.info "Fetching object from cache: #{cache_key}"
-          cache.fetch(cache_key) do
-            Amfetamine.logger.info "Miss! #{cache_key}"
+          Amfetamine.logger.info "Fetching object from cache: #{@recent_cache_key}"
+          cache.fetch(@recent_cache_key) do
+            Amfetamine.logger.info "Miss! #{@recent_cache_key}"
             handle_request(method, key, { :query => conditions } )
           end
         else
@@ -105,12 +109,19 @@ module Amfetamine
                    end
 
         if handle_response(response)
+
           begin
             update_attributes_from_response(response[:body])
           ensure
             clean_cache!
           end
-          cache.set(singular_path, self.to_cacheable) if cacheable?
+
+          path = self.belongs_to_relationship? ? belongs_to_relationships.first.singular_path : singular_path
+          self.cache_key = path
+
+          cache.set(path, self.to_cacheable) if self.cacheable?
+        else
+          false
         end
       end
     end

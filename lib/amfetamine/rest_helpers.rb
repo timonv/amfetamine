@@ -22,14 +22,18 @@ module Amfetamine
     # TODO: Needs refactoring, now just want to make the test pass =)
     # Making assumption here that when response is nil, it should have possitive result. Needs refactor when slept more
     def handle_response(response)
-      if response[:status] == :success || response[:status] == :created
+      case response[:status]
+      when :success, :created
         self.instance_variable_set('@notsaved', false)
         true
-      elsif response[:status] == :errors
+      when :errors
         Amfetamine.logger.warn "Errors from response\n #{response[:body]}"
         response[:body].each do |attr, mesg|
           errors.add(attr.to_sym, mesg )
         end
+        false
+      when :server_error
+        Amfetamine.logger.warn "Something went wrong at the remote end."
         false
       end
     end
