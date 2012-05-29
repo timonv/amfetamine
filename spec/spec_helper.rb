@@ -19,7 +19,9 @@ require 'json'
 def build(object)
   {
     :dummy => lambda { Dummy.new({:title => 'Dummy', :description => 'Crash me!', :id => Dummy.children.length + 1})},
-    :child => lambda { Child.new({:title => 'Child', :description => 'Daddy!', :id => Child.children.length + 1}) }
+    :child => lambda { Child.new({:title => 'Child', :description => 'Daddy!', :id => Child.children.length + 1}) },
+    :dummy2 => lambda { Dummy2.new({:title => 'Dummy2', :description => 'Daddy!', :id => Dummy2.children.length + 1}) }
+
   }[object].call
 end
 

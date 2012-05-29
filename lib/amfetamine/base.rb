@@ -59,6 +59,21 @@ module Amfetamine
       end
     end
 
+    # Sets attributes dynamically
+    def set_dynamic_attributes(attrs = [])
+      klass = class << self;self end # Get reference to eigenklass
+
+      attrs.each do |attr|
+        klass.send(:define_method, "#{attr}=") do |arg|
+          @attributes[attr.to_s] = arg
+        end
+
+        klass.send(:define_method, "#{attr}") do
+          @attributes[attr.to_s]
+        end
+      end
+    end
+
     def self.amfetamine_configure(hash)
       hash.each do |k,v|
         self.send("#{k.to_s}=", v)
@@ -99,6 +114,7 @@ module Amfetamine
     def initialize(args={})
       super
       @attributes = {}
+      self.set_dynamic_attributes(args.keys)
       self.cache_key = self.class.recent_cache_key # Shows how this object was retrieved from cache
       args.each { |k,v| self.send("#{k}=", v) }
       @notsaved = true

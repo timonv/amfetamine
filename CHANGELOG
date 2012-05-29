@@ -1,0 +1,2 @@
+0.2.8
+- Attributes are now set dynamically. This OVERIDES anything you set on 'amfetamine_attributes'. This should reduce a lot of bloat.
