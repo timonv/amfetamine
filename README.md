@@ -3,7 +3,11 @@ Amfetamine, A REST object abstractavaganza
 
 > Makes your API calls f-f-f-ast!
 
-Amfetamine adds an ActiveModel like interface to your REST services with support for any HTTParty client and caching using memcached.
+Amfetamine adds an ActiveModel like interface to your REST services with support for any HTTP(arty) client and caching using memcached.
+
+Sometimes you just quickly need to wrap up a REST api without having to worry about persistancy or the data. And since you want caching …
+
+Note that the cache invalidates only when local changes are made. You could use a distributed cache or, more easilly, set a TTL on Dalli.
 
 Features
 --------
@@ -16,9 +20,9 @@ It is still in beta and under heavy development. Some features:
 * It has a lot of methods that you expect from ActiveModel objects. Find, all, save, create, new, destroy, update_attributes, update.
 * It supports all validation methods ActiveModel provides, thanks to ActiveModel -red.
 * You can fully configure your memcached client, it uses Dalli.
-* Although the client has been tested and build with JSON, it should support XML as well.
+* Although the client has been tested and build with JSON, it should support XML or Bson as well.
 * It supports single nested resources for now.
-* It supports conditions in the all method (find method asap), just provice a :conditions hash like you're used to.
+* It supports conditions in the all and find method, just provide a :conditions hash like you're used to.
 * Supports global HTTP and Memcached client as well as per object overriding.
 * If a request passes validation on client side and not on service side, the client properly sets error messages from the service.
 * Provides testing helpers
@@ -28,16 +32,17 @@ Setup
 =====
 
 ### 1)
-Add it to your gemfile (not released yet):
+Add it to your gemfile:
 
 ```ruby
 gem 'amfetamine'
 ```
 
 ### 2)
-Create an initializer amfetamine_initializer.rb:
+Create an initializer, note that you can also do this on a per object basis:
 
 ```ruby
+#config/initializers/amfetamine_config.rb
 Amfetamine::Config.configure do |config|
   config.memcached_instance = [HOST:PORT, OPTION1,OPTION2] || HOST:PORT
   config.rest_client = REST_CLIENT
@@ -53,9 +58,7 @@ Configure your object:
 
 ```ruby
 class Banana < Amfetamine::Base
-  # You need to setup an attribute for each attribute your object has, apart from id (thats _mandatory_)
-  amfetamine_attributes :name, :shape, :color, :created_at, :updated_at
-
+  # Right now methods are set dynamically, the older syntax is deprecated. Will move to an or/or situation.
   # OPTIONAL: Per object configuration
   amfetamine_configure memcached_instance: 'localhost:11211',
                  rest_client: BananaRestclient
@@ -168,8 +171,8 @@ end
 
 TODO
 
-Future Features
-===============
+Future Features & TODO
+======================
 
 * Smarter caching
 * Better support for custom methods
@@ -179,16 +182,29 @@ Future Features
 * Supporting interobject relationship (database versus service)
 * More callbacks
 * Better typecasting, it doesn't always work.
+* Asynchronous requests
+* Started out a lot smaller, metaprogramming needs to go composited.
 
 Licence
 =======
 
-TBD
+
+Copyright (C) 2012 Exvo.com, Timon Vonk
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 Contributing
 ============
 
-Please do a pull request and test your code!
+* Fork
+* Test
+* Code
+* Test
+* Pull Request
 
 Contributors
 ============
